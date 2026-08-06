@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Analytics & Reporting | AquaFRESH</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="assets/AquaFRESH.png">
+    <link rel="stylesheet" href="AnalyticsReporting.css">
+</head>
+<body>
+
+<!-- CHANGE 1: checkbox MUST be first element in body -->
+<input type="checkbox" id="nav-toggle">
+
+<aside class="sidebar">
+    <div class="brand">
+        <img src="assets/AquaFRESH.png" class="logo-full">
+        <img src="assets/ColAquaFRESH.png" class="logo-icon">
+        <p class="brand-text">Aquaculture Freshness Monitoring System</p>
+    </div>
+    <nav class="menu">
+        <ul>
+            <li data-role="superadmin admin manager"><a href="Dashboard.html"><i class="fa-solid fa-gauge"></i><span class="label">Dashboard</span></a></li>
+            <li data-role="inspector"><a href="InspectorDashboard.html"><i class="fa-solid fa-clipboard-check"></i><span class="label">Inspector Dashboard</span></a></li>
+            <li data-role="delivery"><a href="DeliveryDashboard.html"><i class="fa-solid fa-truck"></i><span class="label">Delivery Dashboard</span></a></li>
+            <li data-role="superadmin admin manager inspector"><a href="QualityControl.html"><i class="fa-solid fa-shield-halved"></i><span class="label">Quality Control</span></a></li>
+            <li data-role="superadmin admin manager inspector delivery"><a href="FreshnessEvaluation.html"><i class="fa-solid fa-water"></i><span class="label">Freshness Evaluation</span></a></li>
+            <li data-role="superadmin admin manager delivery"><a href="TransportDelivery.html"><i class="fa-solid fa-route"></i><span class="label">Transport &amp; Delivery</span></a></li>
+            <li data-role="superadmin admin manager delivery"><a href="AnalyticsReporting.html" class="active"><i class="fa-solid fa-chart-line"></i><span class="label">Analytics &amp; Reporting</span></a></li>
+            <li data-role="superadmin admin manager"><a href="UserManagement.html"><i class="fa-solid fa-users"></i><span class="label">User Management</span></a></li>
+        </ul>
+    </nav>
+</aside>
+
+<!-- CHANGE 2: sidebar overlay added after </aside> -->
+<div class="sidebar-overlay" onclick="document.getElementById('nav-toggle').checked = false;"></div>
+
+<header class="topbar">
+    <!-- CHANGE 3: span → label so it controls the checkbox -->
+    <label for="nav-toggle" class="menu-btn">☰</label>
+    <div class="profile-dropdown">
+        <input type="checkbox" id="profile-toggle">
+        <label for="profile-toggle" class="profile-trigger">
+            <span id="userRoleLabel">User</span><span class="caret">▾</span>
+        </label>
+        <div class="dropdown-menu">
+            <a href="Profile.html">Profile</a>
+            <a href="Login.html" class="logout">Logout</a>
+        </div>
+    </div>
+</header>
+
+<main class="content">
+    <h2>System Analytics</h2>
+    <p class="subtitle">Real-time environmental readings, sensor health, and connectivity status</p>
+    <section id="alarmBanner" class="alarm-banner" role="alert" aria-live="polite" hidden>
+        <div class="alarm-icon"><i class="fa-solid fa-bell"></i></div>
+        <div class="alarm-copy">
+            <p class="alarm-title">Threshold Alert</p>
+            <ul class="alarm-list" id="alarmMessages"></ul>
+            <p class="alarm-updated" id="alarmTimestamp"></p>
+        </div>
+    </section>
+    <section class="panel">
+        <div class="panel-header-flex"><h3>Tank Monitoring</h3></div>
+        <p class="subtitle" style="margin-top:-10px;margin-bottom:20px;">Overview of tank status and sensor conditions across monitored tanks per truck</p>
+        <div class="view-tanks-card green" id="viewTanksCard" onclick="openSensorModal()">
+            <div class="card-icon" id="viewTanksIcon"><i class="fa-solid fa-check" id="viewTanksIconGlyph"></i></div>
+            <div class="card-info">
+                <div class="card-title" id="viewTanksTitle">All Tanks Normal</div>
+                <div class="card-subtitle" id="viewTanksSubtitle">All tanks within safe thresholds</div>
+                <div class="card-cta">View tanks</div>
+            </div>
+            <i class="fa-solid fa-chevron-right card-arrow"></i>
+        </div>
+    </section>
+    <section class="panel" id="selectionPanel">
+    <div class="panel-header-flex">
+        <h3>Select a Tank for Analytics</h3>
+    </div>
+    <div class="summary-cards">
+        <div class="card success" id="select-tank1" onclick="selectTank('tank1')" style="cursor: pointer; border-left: 5px solid #10b981; min-width: 320px;">
+            <div class="panel-header-flex" style="margin-bottom: 10px;">
+                <div>
+                    <h2 style="font-size: 20px;">Tank 1</h2>
+                    <p class="subtitle" style="margin-top: 2px;">
+                        <i class="fa-solid fa-truck" style="margin-right: 5px; color: #0ea5e9;"></i> Assigned to: Truck A
+                    </p>
+                </div>
+                <span class="status good" id="tank1-selection-status"><i class="fa-solid fa-check"></i> ONLINE</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px; font-weight: 600;">
+                <span id="card-tank1-temp"><i class="fa-solid fa-temperature-half" style="color: #0ea5e9;"></i> --°C</span>
+                <span id="card-tank1-ph"><i class="fa-solid fa-droplet" style="color: #10b981;"></i> --</span>
+                <span id="card-tank1-hum"><i class="fa-solid fa-cloud" style="color: #f97316;"></i> --%</span>
+            </div>
+            <div style="text-align: right; margin-top: 10px;">
+                <small class="subtitle" id="card-tank1-time" style="font-size: 10px;">Awaiting data...</small>
+            </div>
+        </div>
+
+        <div class="card" style="opacity: 0.6; cursor: not-allowed; min-width: 320px;">
+            <div class="panel-header-flex" style="margin-bottom: 10px;">
+                <div>
+                    <h2 style="font-size: 20px; color: #94a3b8;">Tank 2</h2>
+                    <p class="subtitle"><i class="fa-solid fa-truck" style="margin-right: 5px;"></i> Assigned to: Truck B</p>
+                </div>
+                <span class="status offline" style="background:#f1f5f9; color:#94a3b8;">OFFLINE</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; color: #cbd5e1; margin-top: 15px;">
+                <span><i class="fa-solid fa-temperature-half"></i> --</span>
+                <span><i class="fa-solid fa-droplet"></i> --</span>
+                <span><i class="fa-solid fa-cloud"></i> --</span>
+            </div>
+        </div>
+        
+        <div class="card" style="opacity: 0.6; cursor: not-allowed; min-width: 320px;">
+            <div class="panel-header-flex" style="margin-bottom: 10px;">
+                <div>
+                    <h2 style="font-size: 20px; color: #94a3b8;">Tank 2</h2>
+                    <p class="subtitle"><i class="fa-solid fa-truck" style="margin-right: 5px;"></i> Assigned to: Truck C</p>
+                </div>
+                <span class="status offline" style="background:#f1f5f9; color:#94a3b8;">OFFLINE</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; color: #cbd5e1; margin-top: 15px;">
+                <span><i class="fa-solid fa-temperature-half"></i> --</span>
+                <span><i class="fa-solid fa-droplet"></i> --</span>
+                <span><i class="fa-solid fa-cloud"></i> --</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="panel" id="trendsPanelSection" style="display: none;">
+    <div class="panel-header-flex">
+        <h2 id="selectedTankTitle" style="font-size: 20px;">Analytics Trends for Tank 1 (Truck A)</h2>
+        <button onclick="backToSelection()" style="background:#f1f5f9; border:none; padding: 8px 12px; border-radius: 6px; color:#475569; cursor:pointer; font-weight:600;">
+            <i class="fa-solid fa-arrow-rotate-left"></i> Change Tank
+        </button>
+    </div>
+        <!-- TOP-LEVEL TAB BAR -->
+        <div class="trends-tabs" style="margin-bottom:24px;">
+            <div class="trends-tab active" data-trendtab="sensor">
+                <i class="fa-solid fa-microchip"></i> Sensor Trends
+            </div>
+            <div class="trends-tab" data-trendtab="freshness">
+                <i class="fa-solid fa-fish"></i> Freshness Trends
+            </div>
+            <div class="trends-tab" data-trendtab="delivery">
+                <i class="fa-solid fa-truck"></i> Delivery Performance
+            </div>
+        </div>
+
+        <!-- SENSOR TRENDS -->
+        <div class="trends-panel active" id="sensor">
+            <div class="trend-tabs">
+                <div class="trend-card active" data-trend="temp"><div class="trend-icon"><i class="fa-solid fa-temperature-half"></i></div><div class="trend-info"><div class="trend-title">Temperature</div><div class="trend-value">Trend</div></div><i class="fa-solid fa-chevron-right trend-arrow"></i></div>
+                <div class="trend-card" data-trend="ph"><div class="trend-icon"><i class="fa-solid fa-droplet"></i></div><div class="trend-info"><div class="trend-title">pH Level</div><div class="trend-value">Trend</div></div><i class="fa-solid fa-chevron-right trend-arrow"></i></div>
+                <div class="trend-card" data-trend="humidity"><div class="trend-icon"><i class="fa-solid fa-cloud"></i></div><div class="trend-info"><div class="trend-title">Humidity</div><div class="trend-value">Trend</div></div><i class="fa-solid fa-chevron-right trend-arrow"></i></div>
+            </div>
+            <div class="trend-content active" id="temp"><div class="metric-panel"><div class="metric-value-card"><div class="metric-label">Current Temperature</div><div class="metric-reading" id="temperature-current">--</div><div class="metric-subtext" id="temperature-updated">Awaiting data</div></div><div class="chart-wrapper"><canvas id="temperatureChart"></canvas></div></div></div>
+            <div class="trend-content" id="ph"><div class="metric-panel"><div class="metric-value-card"><div class="metric-label">Current pH Level</div><div class="metric-reading" id="ph-current">--</div><div class="metric-subtext" id="ph-updated">Awaiting data</div></div><div class="chart-wrapper"><canvas id="phChart"></canvas></div></div></div>
+            <div class="trend-content" id="humidity"><div class="metric-panel"><div class="metric-value-card"><div class="metric-label">Current Humidity</div><div class="metric-reading" id="humidity-current">--</div><div class="metric-subtext" id="humidity-updated">Awaiting data</div></div><div class="chart-wrapper"><canvas id="humidityChart"></canvas></div></div></div>
+        </div>
+        <!-- FRESHNESS TRENDS -->
+        <div class="trends-panel" id="freshness">
+            <!-- Percentage summary cards -->
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;">
+                <div style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:10px;padding:14px 16px;text-align:center;">
+                    <div style="font-size:11px;font-weight:700;color:#16a34a;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;"><i class="fa-solid fa-fish"></i> Fresh</div>
+                    <div id="fresh-pct" style="font-size:1.8rem;font-weight:800;color:#16a34a;line-height:1;">--%</div>
+                    <div style="font-size:11px;color:#64748b;margin-top:2px;">of total</div>
+                </div>
+                <div style="background:#fefce8;border:1.5px solid #fde047;border-radius:10px;padding:14px 16px;text-align:center;">
+                    <div style="font-size:11px;font-weight:700;color:#ca8a04;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;"><i class="fa-solid fa-water"></i> With Issues</div>
+                    <div id="moderate-pct" style="font-size:1.8rem;font-weight:800;color:#ca8a04;line-height:1;">--%</div>
+                    <div style="font-size:11px;color:#64748b;margin-top:2px;">of total</div>
+                </div>
+                <div style="background:#fef2f2;border:1.5px solid #fca5a5;border-radius:10px;padding:14px 16px;text-align:center;">
+                    <div style="font-size:11px;font-weight:700;color:#dc2626;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;"><i class="fa-solid fa-triangle-exclamation"></i> Rejected</div>
+                    <div id="spoiled-pct" style="font-size:1.8rem;font-weight:800;color:#dc2626;line-height:1;">--%</div>
+                    <div style="font-size:11px;color:#64748b;margin-top:2px;">of total</div>
+                </div>
+            </div>
+            <!-- Combined stacked bar chart -->
+            <div class="chart-wrapper" style="min-height:300px;">
+                <canvas id="freshnessStackedChart"></canvas>
+            </div>
+        </div>
+        <!-- DELIVERY PERFORMANCE -->
+        <div class="trends-panel" id="delivery">
+            <!-- Summary cards -->
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;">
+                <div style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:10px;padding:14px 16px;text-align:center;">
+                    <div style="font-size:11px;font-weight:700;color:#16a34a;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;"><i class="fa-solid fa-truck-fast"></i> On-Time Rate</div>
+                    <div id="delivery-ontime-pct" style="font-size:1.8rem;font-weight:800;color:#16a34a;line-height:1;">--%</div>
+                    <div style="font-size:11px;color:#64748b;margin-top:2px;">of completed deliveries</div>
+                </div>
+                <div style="background:#eff6ff;border:1.5px solid #93c5fd;border-radius:10px;padding:14px 16px;text-align:center;position:relative;">
+                    <div style="display:flex;align-items:center;justify-content:center;gap:6px;font-size:11px;font-weight:700;color:#2563eb;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">
+                        <i class="fa-solid fa-clock"></i> Avg Delay
+                    </div>
+                    <div id="delivery-avg-delay" style="font-size:1.8rem;font-weight:800;color:#2563eb;line-height:1;">--</div>
+                    <div id="delivery-avg-delay-unit" style="font-size:11px;color:#64748b;margin-top:2px;">minutes late</div>
+                    <button type="button" id="delayFormatToggle" title="Change time format"
+                        style="margin-top:8px;font-size:10px;font-weight:600;color:#2563eb;background:#fff;border:1px solid #93c5fd;border-radius:20px;padding:3px 10px;cursor:pointer;">
+                        <i class="fa-solid fa-repeat"></i> <span id="delayFormatLabel">Show as h/m</span>
+                    </button>
+                </div>
+                <div style="background:#fef2f2;border:1.5px solid #fca5a5;border-radius:10px;padding:14px 16px;text-align:center;">
+                    <div style="font-size:11px;font-weight:700;color:#dc2626;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;"><i class="fa-solid fa-triangle-exclamation"></i> Late Deliveries</div>
+                    <div id="delivery-late-count" style="font-size:1.8rem;font-weight:800;color:#dc2626;line-height:1;">--</div>
+                    <div style="font-size:11px;color:#64748b;margin-top:2px;">total delayed</div>
+                </div>
+            </div>
+            <!-- Combined line chart -->
+            <div class="chart-wrapper" style="min-height:300px;">
+                <canvas id="deliveryPerformanceChart"></canvas>
+            </div>
+        </div>
+    </section>
+</main>
+
+<!-- SENSOR MODAL -->
+<div class="qc-modal-overlay" id="sensorModal">
+    <div class="qc-modal">
+        <div class="qc-modal-header teal">
+            <h3><i class="fa-solid fa-microchip"></i> Tank Monitoring</h3>
+            <button class="qc-modal-close" onclick="closeSensorModal()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="qc-modal-body">
+            <div class="sensor-type-grid">
+                <div class="sensor-type-card"><i class="fa-solid fa-temperature-half"></i><div><div class="sensor-type-title">Temperature Sensor</div><div class="sensor-type-sub">Water Temperature Monitoring</div></div></div>
+                <div class="sensor-type-card"><i class="fa-solid fa-droplet"></i><div><div class="sensor-type-title">pH Sensor</div><div class="sensor-type-sub">Water Acidity Monitoring</div></div></div>
+                <div class="sensor-type-card"><i class="fa-solid fa-cloud"></i><div><div class="sensor-type-title">Humidity Sensor</div><div class="sensor-type-sub">Environmental Humidity</div></div></div>
+            </div>
+            <div class="panel-header-flex" style="margin-top:24px;"><h3>Tank Status Overview</h3><span class="live-indicator"><i class="fa-solid fa-circle-dot"></i> Live Data Feed</span></div>
+            <h4 class="truck-group-title"><i class="fa-solid fa-truck"></i> Truck A</h4>
+            <table class="status-table">
+                <thead><tr><th>Tank</th><th>Temperature</th><th>pH</th><th>Humidity</th><th>Status</th><th>Connection</th><th>Last Updated</th></tr></thead>
+                <tbody><tr><td><strong>Tank 1</strong></td><td id="tank1-temp"><i class="fa-solid fa-temperature-half"></i> --</td><td id="tank1-ph"><i class="fa-solid fa-droplet"></i> --</td><td id="tank1-humidity"><i class="fa-solid fa-cloud"></i> --</td><td id="tank1-status"><span class="status good"><i class="fa-solid fa-check"></i> Threshold Normal</span></td><td id="tank1-connection"><span class="connection-badge offline"><i class="fa-solid fa-circle-xmark"></i> Checking…</span></td><td id="tank1-time">--</td></tr></tbody>
+            </table>
+            <h4 class="truck-group-title"><i class="fa-solid fa-truck"></i> Truck B</h4>
+            <table class="status-table">
+                <thead><tr><th>Tank</th><th>Temperature</th><th>pH</th><th>Humidity</th><th>Status</th><th>Connection</th><th>Last Updated</th></tr></thead>
+                <tbody><tr class="inactive-tank"><td><strong>Tank 2</strong></td><td id="tank2-temp">--</td><td id="tank2-ph">--</td><td id="tank2-humidity">--</td><td id="tank2-status">--</td><td id="tank2-connection">--</td><td id="tank2-time">--</td></tr></tbody>
+            </table>
+            <h4 class="truck-group-title"><i class="fa-solid fa-truck"></i> Truck C</h4>
+            <table class="status-table">
+                <thead><tr><th>Tank</th><th>Temperature</th><th>pH</th><th>Humidity</th><th>Status</th><th>Connection</th><th>Last Updated</th></tr></thead>
+                <tbody><tr class="inactive-tank"><td><strong>Tank 3</strong></td><td id="tank3-temp">--</td><td id="tank3-ph">--</td><td id="tank3-humidity">--</td><td id="tank3-status">--</td><td id="tank3-connection">--</td><td id="tank3-time">--</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script type="module" src="sidebar.js"></script>
+<script type="module" src="role-ui.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script type="module" src="AnalyticsReporting.js"></script>
+<script>
+document.querySelectorAll(".trend-card").forEach(card => {
+    card.addEventListener("click", () => {
+        const container = card.closest(".panel");
+        container.querySelectorAll(".trend-card").forEach(c => c.classList.remove("active"));
+        container.querySelectorAll(".trend-content").forEach(c => c.classList.remove("active"));
+        card.classList.add("active");
+        container.querySelector("#" + card.dataset.trend).classList.add("active");
+    });
+});
+document.querySelectorAll(".trends-tab").forEach(tab => {
+    tab.addEventListener("click", () => {
+        document.querySelectorAll(".trends-tab").forEach(t => t.classList.remove("active"));
+        document.querySelectorAll(".trends-panel").forEach(p => p.classList.remove("active"));
+        tab.classList.add("active");
+        const target = document.getElementById(tab.dataset.trendtab);
+        if (target) {
+            target.classList.add("active");
+            // Resize charts inside the newly visible panel
+            setTimeout(() => {
+                target.querySelectorAll("canvas").forEach(canvas => {
+                    const chart = Chart.getChart(canvas);
+                    if (chart) chart.resize();
+                });
+            }, 50);
+        }
+    });
+});
+function openSensorModal()  { document.getElementById("sensorModal").classList.add("active"); }
+function closeSensorModal() { document.getElementById("sensorModal").classList.remove("active"); }
+</script>
+</body>
+</html>

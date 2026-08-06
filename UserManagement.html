@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Management | AquaFRESH</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="UserManagement.css?v=3">
+    <link rel="icon" type="image/png" href="assets/AquaFRESH.png">
+</head>
+<body>
+
+<!-- CHANGE 1: checkbox MUST be first element in body -->
+<input type="checkbox" id="nav-toggle">
+
+<aside class="sidebar">
+    <div class="brand">
+        <img src="assets/AquaFRESH.png" class="logo-full">
+        <img src="assets/ColAquaFRESH.png" class="logo-icon">
+        <p class="brand-text">Aquaculture Freshness Monitoring System</p>
+    </div>
+    <nav class="menu">
+        <ul>
+            <li data-role="superadmin admin manager"><a href="Dashboard.html"><i class="fa-solid fa-gauge"></i><span class="label">Dashboard</span></a></li>
+            <li data-role="inspector"><a href="InspectorDashboard.html"><i class="fa-solid fa-clipboard-check"></i><span class="label">Inspector Dashboard</span></a></li>
+            <li data-role="delivery"><a href="DeliveryDashboard.html"><i class="fa-solid fa-truck"></i><span class="label">Delivery Dashboard</span></a></li>
+            <li data-role="superadmin admin manager inspector"><a href="QualityControl.html"><i class="fa-solid fa-shield-halved"></i><span class="label">Quality Control</span></a></li>
+            <li data-role="superadmin admin manager inspector delivery"><a href="FreshnessEvaluation.html"><i class="fa-solid fa-water"></i><span class="label">Freshness Evaluation</span></a></li>
+            <li data-role="superadmin admin manager delivery"><a href="TransportDelivery.html"><i class="fa-solid fa-route"></i><span class="label">Transport &amp; Delivery</span></a></li>
+            <li data-role="superadmin admin manager"><a href="AnalyticsReporting.html"><i class="fa-solid fa-chart-line"></i><span class="label">Analytics &amp; Reporting</span></a></li>
+            <li data-role="superadmin admin manager"><a href="UserManagement.html" class="active"><i class="fa-solid fa-users"></i><span class="label">User Management</span></a></li>
+        </ul>
+    </nav>
+</aside>
+
+<!-- CHANGE 2: sidebar overlay after </aside> -->
+<div class="sidebar-overlay" onclick="document.getElementById('nav-toggle').checked = false;"></div>
+
+<header class="topbar">
+    <!-- CHANGE 3: span → label -->
+    <label for="nav-toggle" class="menu-btn">☰</label>
+    <div class="profile-dropdown">
+        <input type="checkbox" id="profile-toggle">
+        <label for="profile-toggle" class="profile-trigger">
+            <span id="userRoleLabel">User</span> <span class="caret">▾</span>
+        </label>
+        <div class="dropdown-menu">
+            <a href="Profile.html">Profile</a>
+            <a href="Login.html" class="logout">Logout</a>
+        </div>
+    </div>
+</header>
+
+<main class="content">
+    <section class="page-header">
+        <h2>User Management</h2>
+        <p class="subtitle">Manage system users, roles, and account status</p>
+    </section>
+    <section class="summary-cards">
+        <div class="card"><h3>Total Users</h3><p class="card-number" id="totalUsers">0</p></div>
+        <div class="card success"><h3>Active</h3><p class="card-number" id="activeUsers">0</p></div>
+        <div class="card warning"><h3>Disabled</h3><p class="card-number" id="disabledUsers">0</p></div>
+    </section>
+    <section class="panel">
+        <div class="panel-header-flex">
+            <h3>System Users</h3>
+            <div class="header-actions">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="searchInput" placeholder="Search users..." />
+                </div>
+                <div class="filter-wrapper"></div>
+                <button id="filterBtn" class="filter-btn"><i class="fa-solid fa-sliders"></i></button>
+            </div>
+        </div>
+        <div class="filter-dropdown" id="filterDropdown">
+            <div class="filter-group">
+                <label>Role</label>
+                <select id="roleFilter">
+                    <option value="">All Roles</option>
+                    <option value="admin">Admin</option>
+                    <option value="manager">Manager</option>
+                    <option value="inspector">Inspector</option>
+                    <option value="delivery">Delivery</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Status</label>
+                <select id="statusFilter">
+                    <option value="">All Status</option>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                </select>
+            </div>
+            <div class="filter-actions">
+                <button id="clearFilter" class="btn clear">Clear</button>
+                <button id="applyFilter" class="btn apply">Apply</button>
+            </div>
+        </div>
+        <div class="table-scroll">
+            <table class="user-table">
+                <thead>
+                    <tr>
+                        <th>User ID</th><th>Full Name</th><th>Email</th><th>Phone</th><th>Address</th><th>Role</th><th>Status</th><th>Account Created</th><th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </section>
+    <section class="panel panel-trigger">
+        <button class="new-user-trigger" id="btn-new-user">
+            <div class="ni-trigger-icon"><i class="fa-solid fa-user-plus"></i></div>
+            <div class="ni-trigger-text"><h3>Add New User</h3><p>Create a new system account and assign a role</p></div>
+            <i class="fa-solid fa-arrow-right ni-trigger-arrow"></i>
+        </button>
+    </section>
+</main>
+
+<!-- ADD USER MODAL -->
+<div class="qc-modal-overlay" id="modal-new-user">
+    <div class="qc-modal">
+        <div class="qc-modal-header teal">
+            <h3><i class="fa-solid fa-user-plus"></i> Create New User</h3>
+            <button class="qc-modal-close" onclick="closeUserModal()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="qc-modal-body">
+            <div class="ni-divider"><i class="fa-solid fa-circle-info"></i> User Information</div>
+            <div class="ni-modal-grid">
+                <div class="ni-form-group"><label>Full Name</label><input type="text" id="newFullName" placeholder="Enter full name"></div>
+                <div class="ni-form-group"><label>Email Address</label><input type="email" id="newEmail" placeholder="Enter email"></div>
+                <div class="ni-form-group"><label>Phone</label><input type="text" id="newPhone" placeholder="Phone number"></div>
+                <div class="ni-form-group"><label>Address</label><input type="text" id="newAddress" placeholder="Address"></div>
+                <div class="ni-form-group"><label>Password</label><input type="password" id="newPassword" placeholder="Enter password"></div>
+                <div class="ni-form-group">
+                    <label>User Role</label>
+                    <select id="newRole">
+                        <option value="admin">Admin</option>
+                        <option value="manager">Manager</option>
+                        <option value="inspector">Inspector</option>
+                        <option value="delivery">Delivery Staff</option>
+                    </select>
+                </div>
+                <div class="ni-form-group">
+                    <label>Status</label>
+                    <select id="newStatus">
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="ni-modal-footer">
+            <button class="ni-btn-clear" onclick="closeUserModal()">Cancel</button>
+            <button class="ni-btn-save" onclick="createUser()"><i class="fa-solid fa-check"></i> Create User</button>
+        </div>
+    </div>
+</div>
+
+<script type="module" src="sidebar.js?v=3"></script>
+<script type="module" src="role-ui.js?v=3"></script>
+<script type="module" src="UserManagement.js?v=3"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const newUserBtn = document.getElementById("btn-new-user");
+        const modal = document.getElementById("modal-new-user");
+        if (newUserBtn) { newUserBtn.addEventListener("click", () => { modal.classList.add("active"); document.body.style.overflow = "hidden"; }); }
+        window.closeUserModal = function () { modal.classList.remove("active"); document.body.style.overflow = ""; };
+        modal.addEventListener("click", (e) => { if (e.target === modal) closeUserModal(); });
+    });
+</script>
+
+<!-- EDIT USER -->
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <h3>Edit User</h3>
+        <input type="hidden" id="editUserId">
+        <div class="form-grid">
+            <input type="text" id="editFullName" placeholder="Full Name">
+            <input type="email" id="editEmail" placeholder="Email">
+            <input type="text" id="editPhone" placeholder="Phone">
+            <input type="text" id="editAddress" placeholder="Address">
+            <select id="editRole">
+                <option value="superadmin">Superadmin</option>
+                <option value="admin">Admin</option>
+                <option value="manager">Manager</option>
+                <option value="inspector">Inspector</option>
+                <option value="delivery">Delivery Staff</option>
+            </select>
+        </div>
+        <div class="modal-actions">
+            <button onclick="closeEditModal()" class="secondary-btn">Cancel</button>
+            <button onclick="saveEditUser()" class="submit-btn">Save Changes</button>
+        </div>
+    </div>
+</div>
+
+<!-- DELETE CONFIRM -->
+<div id="deleteModal" class="modal">
+    <div class="modal-content">
+        <h3>Delete User</h3>
+        <p>Are you sure you want to delete this user?</p>
+        <input type="hidden" id="deleteUserId">
+        <div class="modal-actions">
+            <button onclick="closeDeleteModal()" class="secondary-btn">Cancel</button>
+            <button onclick="confirmDeleteUser()" class="btn delete">Delete</button>
+        </div>
+    </div>
+</div>
+
+<div id="toast-success" class="toast-notification">
+    <i class="fa-solid fa-circle-check"></i>
+    <span>User created successfully</span>
+</div>
+
+</body>
+</html>

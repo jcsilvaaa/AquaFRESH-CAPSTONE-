@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Inspector Dashboard | AquaFRESH</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="InspectorDashboard.css">
+    <link rel="icon" type="image/png" href="assets/AquaFRESH.png">
+</head>
+<body>
+
+<!-- ① checkbox MUST be first in body -->
+<input type="checkbox" id="nav-toggle">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+    <div class="brand">
+        <img src="assets/AquaFRESH.png" class="logo-full">
+        <img src="assets/ColAquaFRESH.png" class="logo-icon">
+        <p class="brand-text">Aquaculture Freshness Monitoring System</p>
+    </div>
+    <nav class="menu">
+        <ul>
+            <li data-role="superadmin admin manager">
+                <a href="Dashboard.html"><i class="fa-solid fa-gauge"></i><span class="label">Dashboard</span></a>
+            </li>
+            <li data-role="inspector">
+                <a href="InspectorDashboard.html" class="active"><i class="fa-solid fa-clipboard-check"></i><span class="label">Inspector Dashboard</span></a>
+            </li>
+            <li data-role="delivery">
+                <a href="DeliveryDashboard.html"><i class="fa-solid fa-truck"></i><span class="label">Delivery Dashboard</span></a>
+            </li>
+            <li data-role="superadmin admin manager inspector">
+                <a href="QualityControl.html"><i class="fa-solid fa-shield-halved"></i><span class="label">Quality Control</span></a>
+            </li>
+            <li data-role="superadmin admin manager inspector delivery">
+                <a href="FreshnessEvaluation.html"><i class="fa-solid fa-water"></i><span class="label">Freshness Evaluation</span></a>
+            </li>
+            <li data-role="superadmin admin manager delivery">
+                <a href="TransportDelivery.html"><i class="fa-solid fa-route"></i><span class="label">Transport &amp; Delivery</span></a>
+            </li>
+            <li data-role="superadmin admin manager">
+                <a href="AnalyticsReporting.html"><i class="fa-solid fa-chart-line"></i><span class="label">Analytics &amp; Reporting</span></a>
+            </li>
+            <li data-role="superadmin admin manager">
+                <a href="UserManagement.html"><i class="fa-solid fa-users"></i><span class="label">User Management</span></a>
+            </li>
+        </ul>
+    </nav>
+</aside>
+
+<!-- ② overlay -->
+<div class="sidebar-overlay" onclick="document.getElementById('nav-toggle').checked = false;"></div>
+
+<!-- TOP BAR -->
+<!-- ③ label not span -->
+<header class="topbar">
+    <label for="nav-toggle" class="menu-btn">☰</label>
+    <div class="profile-dropdown">
+        <input type="checkbox" id="profile-toggle">
+        <label for="profile-toggle" class="profile-trigger">
+            <span id="userRoleLabel">User</span> <span class="caret">▾</span>
+        </label>
+        <div class="dropdown-menu">
+            <a href="Profile.html">Profile</a>
+            <a href="Login.html" class="logout">Logout</a>
+        </div>
+    </div>
+</header>
+
+<!-- CONTENT -->
+<main class="content">
+
+    <div class="insp-page-header">
+        <div class="insp-header-left">
+            <h2>Inspector Dashboard</h2>
+            <p class="subtitle">Overview of today's inspection activities.</p>
+        </div>
+        <div class="insp-header-right">
+            <div class="insp-today-badge">
+                <i class="fa-solid fa-calendar-day"></i>
+                <span>Today: <strong id="today-count-badge">0</strong></span>
+            </div>
+            <a href="QualityControl.html?action=new" class="insp-log-btn">
+                <i class="fa-solid fa-plus"></i> Log New Inspection
+            </a>
+        </div>
+    </div>
+
+    <!-- Tab Bar -->
+    <div class="insp-tab-bar">
+        <button class="insp-tab active" data-tab="today">
+            <i class="fa-solid fa-calendar-day"></i>
+            <span>Today</span>
+            <span class="insp-tab-badge" id="tab-today-badge">0</span>
+        </button>
+        <button class="insp-tab" data-tab="attention">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <span>Needs Attention</span>
+            <span class="insp-tab-badge attention" id="na-count-badge" style="display:none;">0</span>
+        </button>
+    </div>
+
+    <!-- Tab: Today -->
+    <section class="panel insp-tab-panel active" id="tab-today">
+        <div class="insp-filter-bar">
+            <div class="insp-search-wrap">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="insp-search" placeholder="Search batch ID or product...">
+            </div>
+            <select id="insp-sort-status" class="insp-filter-select">
+                <option value="">All Statuses</option>
+                <option value="Passed">Passed</option>
+                <option value="With Issues">With Issues</option>
+                <option value="Rejected">Rejected</option>
+            </select>
+            <select id="insp-sort-date" class="insp-filter-select">
+                <option value="desc">Newest First</option>
+                <option value="asc">Oldest First</option>
+            </select>
+        </div>
+
+        <!-- Outer: vertical scroll -->
+        <div class="insp-table-outer">
+            <!-- Inner: horizontal scroll -->
+            <div class="insp-table-inner">
+                <table class="qc-table">
+                    <thead>
+                        <tr>
+                            <th>Batch</th>
+                            <th>Product</th>
+                            <th>Location</th>
+                            <th>Status</th>
+                            <th>Date &amp; Time</th>
+                        </tr>
+                    </thead>
+                    <tbody id="today-body">
+                        <tr><td colspan="5" style="text-align:center;padding:24px;color:#94a3b8;">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tab: Needs Attention -->
+    <section class="panel insp-tab-panel" id="tab-attention">
+        <ul class="task-list" id="pending-inspections"></ul>
+    </section>
+
+</main>
+
+<script type="module" src="sidebar.js"></script>
+<script type="module" src="role-ui.js"></script>
+<script type="module" src="InspectorDashboard.js"></script>
+<script>
+    document.querySelectorAll('.insp-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.insp-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.insp-tab-panel').forEach(p => p.classList.remove('active'));
+            tab.classList.add('active');
+            const target = document.getElementById('tab-' + tab.dataset.tab);
+            if (target) target.classList.add('active');
+        });
+    });
+</script>
+</body>
+</html>

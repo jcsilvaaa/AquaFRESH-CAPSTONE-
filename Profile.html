@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AquaFRESH | Profile</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="Dashboard.css">
+    <link rel="stylesheet" href="Profile.css">
+    <link rel="icon" type="image/png" href="assets/AquaFRESH.png">
+
+</head>
+<body>
+
+<input type="checkbox" id="nav-toggle">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+    <div class="brand">
+        <img src="assets/AquaFRESH.png" class="logo-full">
+        <img src="assets/ColAquaFRESH.png" class="logo-icon">
+        <p class="brand-text">Aquaculture Freshness Monitoring System</p>
+    </div>
+
+    <nav class="menu">
+        <ul>
+            <li data-role="superadmin admin manager">
+                <a href="Dashboard.html">
+                    <i class="fa-solid fa-gauge"></i>
+                    <span class="label">Dashboard</span>
+                </a>
+            </li>
+
+            <li data-role="inspector">
+                <a href="InspectorDashboard.html">
+                    <i class="fa-solid fa-clipboard-check"></i>
+                    <span class="label">Inspector Dashboard</span>
+                </a>
+            </li>
+
+            <li data-role="delivery">
+                <a href="DeliveryDashboard.html">
+                    <i class="fa-solid fa-truck"></i>
+                    <span class="label">Delivery Dashboard</span>
+                </a>
+            </li>
+
+            <li data-role="superadmin admin manager inspector delivery">
+                <a href="FreshnessEvaluation.html">
+                    <i class="fa-solid fa-water"></i>
+                    <span class="label">Freshness Evaluation</span>
+                </a>
+            </li>
+
+            <li data-role="superadmin admin manager delivery">
+                <a href="TransportDelivery.html">
+                    <i class="fa-solid fa-route"></i>
+                    <span class="label">Transport & Delivery</span>
+                </a>
+            </li>
+
+            <li data-role="superadmin admin manager inspector">
+                <a href="AnalyticsReporting.html">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span class="label">Analytics & Reporting</span>
+                </a>
+            </li>
+
+            <li data-role="superadmin admin manager inspector">
+                <a href="QualityControl.html">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span class="label">Quality Control</span>
+                </a>
+            </li>
+
+            <li data-role="superadmin admin manager">
+                <a href="UserManagement.html">
+                    <i class="fa-solid fa-users"></i>
+                    <span class="label">User Management</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</aside>
+
+<!-- TOP BAR -->
+<header class="topbar">
+    <label for="nav-toggle" class="menu-btn">☰</label>
+
+    <div class="profile-dropdown">
+        <input type="checkbox" id="profile-toggle">
+        <label for="profile-toggle" class="profile-trigger">
+            <span id="userRoleLabel">User</span>
+            <span class="caret">▾</span>
+        </label>
+
+        <div class="dropdown-menu">
+            <a href="Profile.html">Profile</a>
+            <a href="Login.html" class="logout" onclick="localStorage.clear()">Logout</a>
+        </div>
+    </div>
+</header>
+
+<!-- MAIN CONTENT -->
+<main class="content">
+
+    <div class="page-header">
+        <div>
+            <h2>My Profile</h2>
+            <p class="subtitle">View and manage your account information</p>
+        </div>
+        <a href="EditProfile.html" class="edit-btn">
+            <i class="fa-solid fa-pen-to-square"></i> Edit Profile
+        </a>
+    </div>
+
+    <div class="profile-card">
+
+        <!-- Top banner + avatar -->
+        <div class="profile-banner">
+            <div class="avatar" id="profileAvatar">--</div>
+        </div>
+
+        <!-- Name / email / role -->
+        <div class="profile-identity">
+            <h3 id="profileName">Loading...</h3>
+            <p id="profileEmail">Loading...</p>
+            <span class="role-badge" id="profileRoleBadge">Loading...</span>
+        </div>
+
+        <!-- Divider -->
+        <div class="profile-divider"></div>
+
+        <!-- Details grid -->
+        <div class="profile-details">
+
+            <div class="detail-item">
+                <span class="detail-label">Full Name</span>
+                <span class="detail-value" id="detailFullName">Loading...</span>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">Email Address</span>
+                <span class="detail-value" id="detailEmail">Loading...</span>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">Phone Number</span>
+                <span class="detail-value" id="detailPhone">Loading...</span>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">Address</span>
+                <span class="detail-value" id="detailAddress">Loading...</span>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">Role</span>
+                <span class="detail-value" id="detailRole">Loading...</span>
+            </div>
+
+        </div>
+
+    </div>
+
+</main>
+
+<!-- PROFILE SCRIPT — reads directly from Firebase, no localhost needed -->
+<script type="module">
+    import { auth, db } from "./firebase.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    function getInitials(fullName) {
+        if (!fullName) return "U";
+        const parts = fullName.trim().split(" ");
+        if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
+        return (
+            parts[0].charAt(0).toUpperCase() +
+            parts[parts.length - 1].charAt(0).toUpperCase()
+        );
+    }
+
+    function formatRole(role) {
+        if (!role) return "";
+        return role.charAt(0).toUpperCase() + role.slice(1);
+    }
+
+    onAuthStateChanged(auth, async (user) => {
+        // Not logged in — redirect to login
+        if (!user) {
+            window.location.href = "Login.html";
+            return;
+        }
+
+        try {
+            // Fetch the user document from Firestore using the Firebase UID
+            const userDoc = await getDoc(doc(db, "users", user.uid));
+
+            if (!userDoc.exists()) {
+                alert("User profile not found.");
+                window.location.href = "Login.html";
+                return;
+            }
+
+            const data = userDoc.data();
+
+            const fullName = data.fullName || localStorage.getItem("userFullName") || "Unknown User";
+            const role     = data.role     || localStorage.getItem("userRole")     || "user";
+            const email    = data.email    || user.email || "";
+
+            // Update localStorage so other pages stay in sync
+            localStorage.setItem("userFullName", fullName);
+            localStorage.setItem("userRole", role);
+
+            // Populate header avatar & info
+            document.getElementById("profileAvatar").textContent    = getInitials(fullName);
+            document.getElementById("profileName").textContent      = fullName;
+            document.getElementById("profileEmail").textContent     = email;
+            document.getElementById("profileRoleBadge").textContent = formatRole(role);
+
+            // Populate detail fields
+            document.getElementById("detailFullName").textContent = fullName;
+            document.getElementById("detailEmail").textContent    = email;
+            document.getElementById("detailAddress").textContent  = data.address || "No address provided";
+            document.getElementById("detailPhone").textContent    = data.phone   || "No phone provided";
+            document.getElementById("detailRole").textContent     = formatRole(role);
+
+            // Update topbar label
+            document.getElementById("userRoleLabel").textContent = fullName;
+
+        } catch (err) {
+            console.error("Error loading profile from Firestore:", err);
+            alert("Failed to load profile. Please try again.");
+        }
+    });
+</script>
+
+<script type="module" src="sidebar.js"></script>
+<script type="module" src="role-ui.js"></script>
+
+</body>
+</html>

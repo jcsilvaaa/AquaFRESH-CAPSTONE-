@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <title>My Orders | AquaFRESH</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="CustomerDashboard.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <link rel="icon" type="image/png" href="assets/AquaFRESH.png">
+</head>
+<body>
+
+<input type="checkbox" id="nav-toggle">
+
+<aside class="sidebar">
+    <div class="brand">
+        <img src="assets/AquaFRESH.png" class="logo-full">
+        <img src="assets/ColAquaFRESH.png" class="logo-icon">
+        <p class="brand-text">Aquaculture Freshness Monitoring System</p>
+    </div>
+    <nav class="menu">
+        <ul>
+            <li data-role="customer"><a href="CustomerDashboard.html" class="active">
+                <i class="fa-solid fa-box-open"></i>
+                <span class="label">My Orders</span>
+            </a></li>
+        </ul>
+    </nav>
+</aside>
+
+<div class="sidebar-overlay" onclick="document.getElementById('nav-toggle').checked = false;"></div>
+
+<header class="topbar">
+    <label for="nav-toggle" class="menu-btn">☰</label>
+    <div class="topbar-right">
+        <div class="profile-dropdown">
+            <input type="checkbox" id="profile-toggle">
+            <label for="profile-toggle" class="profile-trigger">
+                <span id="userRoleLabel">Customer</span>
+                <span class="caret">▾</span>
+            </label>
+            <div class="dropdown-menu">
+                <a href="Profile.html">Profile</a>
+                <a href="Login.html" class="logout">Logout</a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<main class="content">
+
+    <section class="page-header">
+        <h2>My Orders</h2>
+        <p class="subtitle">Track your AquaFRESH deliveries in real-time</p>
+    </section>
+
+    <!-- STATUS SUMMARY CARDS -->
+    <section class="panel">
+        <div class="panel-header-flex">
+            <h3>Order Summary</h3>
+            <span class="summary-hint">Click a card to view details</span>
+        </div>
+        <div class="qc-status-cards">
+            <div class="qc-status-card yellow" id="btn-pending" role="button" tabindex="0">
+                <div class="card-icon"><i class="fa-solid fa-clock"></i></div>
+                <div class="card-info">
+                    <div class="card-title">Pending</div>
+                    <div class="card-count" id="cust-pending-count">0</div>
+                    <div class="card-cta">View records →</div>
+                </div>
+                <i class="fa-solid fa-chevron-right card-arrow"></i>
+            </div>
+            <div class="qc-status-card blue" id="btn-enroute" role="button" tabindex="0">
+                <div class="card-icon"><i class="fa-solid fa-truck"></i></div>
+                <div class="card-info">
+                    <div class="card-title">On the Way</div>
+                    <div class="card-count" id="cust-enroute-count">0</div>
+                    <div class="card-cta">View records →</div>
+                </div>
+                <i class="fa-solid fa-chevron-right card-arrow"></i>
+            </div>
+            <div class="qc-status-card green" id="btn-delivered" role="button" tabindex="0">
+                <div class="card-icon"><i class="fa-solid fa-circle-check"></i></div>
+                <div class="card-info">
+                    <div class="card-title">Delivered</div>
+                    <div class="card-count" id="cust-delivered-count">0</div>
+                    <div class="card-cta">View records →</div>
+                </div>
+                <i class="fa-solid fa-chevron-right card-arrow"></i>
+            </div>
+            <div class="qc-status-card red" id="btn-delayed" role="button" tabindex="0">
+                <div class="card-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                <div class="card-info">
+                    <div class="card-title">Delayed</div>
+                    <div class="card-count" id="cust-delayed-count">0</div>
+                    <div class="card-cta">View records →</div>
+                </div>
+                <i class="fa-solid fa-chevron-right card-arrow"></i>
+            </div>
+        </div>
+    </section>
+
+    <!-- ACTIVE ORDERS -->
+    <section class="panel">
+        <div class="panel-header-flex">
+            <h3>Active Orders</h3>
+            <span class="summary-hint">Orders currently being processed or delivered</span>
+        </div>
+        <div id="active-orders-list" class="cust-orders-list">
+            <div class="cust-empty-state">
+                <i class="fa-solid fa-inbox"></i>
+                <p>No active orders right now.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ORDER HISTORY -->
+    <section class="panel">
+        <div class="panel-header-flex">
+            <h3>Order History</h3>
+            <span class="summary-hint">Completed and received orders</span>
+        </div>
+        <div id="history-orders-list" class="cust-orders-list">
+            <div class="cust-empty-state">
+                <i class="fa-solid fa-inbox"></i>
+                <p>No completed orders yet.</p>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<!-- MODAL: Pending -->
+<div class="qc-modal-overlay" id="modal-pending">
+    <div class="qc-modal wide">
+        <div class="qc-modal-header yellow">
+            <h3><i class="fa-solid fa-clock"></i> Pending Orders <span class="modal-count-badge" id="modal-pending-count">0</span></h3>
+            <button class="qc-modal-close" data-close="modal-pending"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="qc-modal-body">
+            <table class="qc-table">
+                <thead><tr><th>Delivery ID</th><th>Batch</th><th>From</th><th>To</th><th>ETA</th><th>Status</th></tr></thead>
+                <tbody id="modal-pending-body"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: En Route -->
+<div class="qc-modal-overlay" id="modal-enroute">
+    <div class="qc-modal wide">
+        <div class="qc-modal-header blue">
+            <h3><i class="fa-solid fa-truck"></i> On the Way <span class="modal-count-badge" id="modal-enroute-count">0</span></h3>
+            <button class="qc-modal-close" data-close="modal-enroute"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="qc-modal-body">
+            <table class="qc-table">
+                <thead><tr><th>Delivery ID</th><th>Batch</th><th>From</th><th>To</th><th>ETA</th><th>Driver</th><th>Action</th></tr></thead>
+                <tbody id="modal-enroute-body"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: Delivered -->
+<div class="qc-modal-overlay" id="modal-delivered">
+    <div class="qc-modal wide">
+        <div class="qc-modal-header green">
+            <h3><i class="fa-solid fa-circle-check"></i> Delivered Orders <span class="modal-count-badge" id="modal-delivered-count">0</span></h3>
+            <button class="qc-modal-close" data-close="modal-delivered"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="qc-modal-body">
+            <table class="qc-table">
+                <thead><tr><th>Delivery ID</th><th>Batch</th><th>From</th><th>To</th><th>Delivered At</th><th>Action</th></tr></thead>
+                <tbody id="modal-delivered-body"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: Delayed -->
+<div class="qc-modal-overlay" id="modal-delayed">
+    <div class="qc-modal wide">
+        <div class="qc-modal-header red">
+            <h3><i class="fa-solid fa-triangle-exclamation"></i> Delayed Orders <span class="modal-count-badge" id="modal-delayed-count">0</span></h3>
+            <button class="qc-modal-close" data-close="modal-delayed"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="qc-modal-body">
+            <table class="qc-table">
+                <thead><tr><th>Delivery ID</th><th>Batch</th><th>From</th><th>To</th><th>ETA</th><th>Driver</th><th>Action</th></tr></thead>
+                <tbody id="modal-delayed-body"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: Order Details -->
+<div class="qc-modal-overlay" id="modal-order-detail">
+    <div class="qc-modal">
+        <div class="qc-modal-header teal">
+            <h3><i class="fa-solid fa-box"></i> Order Details</h3>
+            <button class="qc-modal-close" data-close="modal-order-detail"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="qc-modal-body" id="order-detail-body"></div>
+    </div>
+</div>
+
+<!-- MODAL: Confirm Receipt -->
+<div class="qc-modal-overlay" id="modal-confirm-receipt">
+    <div class="qc-modal" style="max-width:420px;">
+        <div class="qc-modal-header green">
+            <h3><i class="fa-solid fa-circle-check"></i> Confirm Receipt</h3>
+            <button class="qc-modal-close" data-close="modal-confirm-receipt"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="qc-modal-body">
+            <div class="cust-confirm-icon"><i class="fa-solid fa-box-open"></i></div>
+            <p class="cust-confirm-title">Did you receive your order?</p>
+            <p class="cust-confirm-sub">By confirming, you acknowledge that order <strong id="confirm-delivery-code"></strong> has been received in good condition.</p>
+            <div class="cust-confirm-actions">
+                <button class="cust-btn-secondary" id="cancel-receipt-btn">Not Yet</button>
+                <button class="cust-btn-primary" id="confirm-receipt-btn">
+                    <i class="fa-solid fa-check"></i> Yes, I Received It
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="module" src="sidebar.js"></script>
+<script type="module" src="role-ui.js"></script>
+<script type="module" src="CustomerDashboard.js"></script>
+
+<script>
+    (function () {
+        function openModal(id) {
+            const el = document.getElementById(id);
+            if (el) el.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeModal(id) {
+            const el = document.getElementById(id);
+            if (el) el.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        document.getElementById('btn-pending')?.addEventListener('click',   () => openModal('modal-pending'));
+        document.getElementById('btn-enroute')?.addEventListener('click',   () => openModal('modal-enroute'));
+        document.getElementById('btn-delivered')?.addEventListener('click', () => openModal('modal-delivered'));
+        document.getElementById('btn-delayed')?.addEventListener('click',   () => openModal('modal-delayed'));
+
+        document.querySelectorAll('.qc-modal-close').forEach(btn => {
+            btn.addEventListener('click', () => closeModal(btn.dataset.close));
+        });
+        document.querySelectorAll('.qc-modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(overlay.id); });
+        });
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') document.querySelectorAll('.qc-modal-overlay.active').forEach(el => closeModal(el.id));
+        });
+
+        window.openModal  = openModal;
+        window.closeModal = closeModal;
+    })();
+</script>
+
+</body>
+</html>

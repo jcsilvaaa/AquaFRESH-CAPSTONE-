@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AquaFRESH | Edit Profile</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="Dashboard.css">
+    <link rel="stylesheet" href="EditProfile.css">
+    <link rel="icon" type="image/png" href="assets/AquaFRESH.png">
+
+</head>
+<body>
+
+<input type="checkbox" id="nav-toggle">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+    <div class="brand">
+        <h1>AquaFRESH</h1>
+        <p>Aquaculture Freshness Monitoring System</p>
+    </div>
+
+    <nav class="menu">
+        <ul>
+            <li data-role="superadmin admin manager">
+                <a href="Dashboard.html">
+                    <i class="fa-solid fa-gauge"></i>
+                    <span class="label">Dashboard</span>
+                </a>
+            </li>
+
+            <li data-role="inspector">
+                <a href="InspectorDashboard.html">
+                    <i class="fa-solid fa-clipboard-check"></i>
+                    <span class="label">Inspector Dashboard</span>
+                </a>
+            </li>
+
+            <li data-role="delivery">
+                <a href="DeliveryDashboard.html">
+                    <i class="fa-solid fa-truck"></i>
+                    <span class="label">Delivery Dashboard</span>
+                </a>
+            </li>
+
+            <li data-role="superadmin admin manager inspector delivery">
+                <a href="FreshnessEvaluation.html">
+                    <i class="fa-solid fa-water"></i>
+                    <span class="label">Freshness Evaluation</span>
+                </a>
+            </li>
+
+            <li data-role="superadmin admin manager delivery">
+                <a href="TransportDelivery.html">
+                    <i class="fa-solid fa-route"></i>
+                    <span class="label">Transport & Delivery</span>
+                </a>
+            </li>
+
+            <li data-role="superadmin admin manager inspector">
+                <a href="AnalyticsReporting.html">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span class="label">Analytics & Reporting</span>
+                </a>
+            </li>
+
+            <li data-role="superadmin admin manager inspector">
+                <a href="QualityControl.html">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span class="label">Quality Control</span>
+                </a>
+            </li>
+
+            <li data-role="superadmin admin manager">
+                <a href="UserManagement.html">
+                    <i class="fa-solid fa-users"></i>
+                    <span class="label">User Management</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</aside>
+
+<!-- TOP BAR -->
+<header class="topbar">
+    <label for="nav-toggle" class="menu-btn">☰</label>
+
+    <div class="profile-dropdown">
+        <input type="checkbox" id="profile-toggle">
+        <label for="profile-toggle" class="profile-trigger">
+            <span id="userRoleLabel">User</span>
+            <span class="caret">▾</span>
+        </label>
+
+        <div class="dropdown-menu">
+            <a href="Profile.html">Profile</a>
+            <a href="Login.html" class="logout">Logout</a>
+        </div>
+    </div>
+</header>
+
+<!-- MAIN CONTENT -->
+<main class="content">
+
+    <div class="page-header">
+        <div>
+            <h2>Edit Profile</h2>
+            <p class="subtitle">Update your personal information below</p>
+        </div>
+    </div>
+
+    <form id="editProfileForm">
+        <div class="profile-card">
+
+            <!-- Banner + avatar -->
+            <div class="profile-banner">
+                <div class="avatar" id="editAvatar">--</div>
+            </div>
+
+            <!-- Name / email / role -->
+            <div class="profile-identity">
+                <h3 id="editHeaderName">Loading...</h3>
+                <p id="editHeaderEmail">Loading...</p>
+                <span class="role-badge" id="editHeaderRole">Loading...</span>
+            </div>
+
+            <!-- Divider -->
+            <div class="profile-divider"></div>
+
+            <!-- Editable fields grid -->
+            <div class="profile-details">
+
+                <div class="form-field">
+                    <label for="editFullName">Full Name</label>
+                    <input type="text" id="editFullName" placeholder="Enter full name" required>
+                </div>
+
+                <div class="form-field">
+                    <label for="editEmail">Email Address</label>
+                    <input type="email" id="editEmail" placeholder="Enter email" required>
+                </div>
+
+                <div class="form-field">
+                    <label for="editPhone">Phone Number</label>
+                    <input type="text" id="editPhone" placeholder="Enter phone number">
+                </div>
+
+                <div class="form-field">
+                    <label for="editAddress">Address</label>
+                    <input type="text" id="editAddress" placeholder="Enter address">
+                </div>
+
+                <div class="form-field">
+                    <label for="editRole">Role</label>
+                    <input type="text" id="editRole" disabled>
+                </div>
+
+            </div>
+
+            <!-- Actions -->
+            <div class="form-actions">
+                <a href="Profile.html" class="btn-cancel">Cancel</a>
+                <button type="submit" class="btn-save">
+                    <i class="fa-solid fa-floppy-disk"></i> Save Changes
+                </button>
+            </div>
+
+        </div>
+    </form>
+
+</main>
+
+<!-- EDIT PROFILE SCRIPT — Firebase only, no localhost -->
+<script type="module">
+    import { auth, db } from "./firebase.js";
+    import {
+        onAuthStateChanged,
+        updateEmail
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import {
+        doc,
+        getDoc,
+        updateDoc
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    let currentUser = null;
+
+    function getInitials(fullName) {
+        if (!fullName) return "U";
+        const parts = fullName.trim().split(" ");
+        if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
+        return (
+            parts[0].charAt(0).toUpperCase() +
+            parts[parts.length - 1].charAt(0).toUpperCase()
+        );
+    }
+
+    function formatRole(role) {
+        if (!role) return "";
+        return role.charAt(0).toUpperCase() + role.slice(1);
+    }
+
+    // ── Load profile from Firestore on auth ready ──
+    onAuthStateChanged(auth, async (user) => {
+        if (!user) {
+            window.location.href = "Login.html";
+            return;
+        }
+
+        currentUser = user;
+
+        try {
+            const userDoc = await getDoc(doc(db, "users", user.uid));
+
+            if (!userDoc.exists()) {
+                alert("User profile not found.");
+                window.location.href = "Login.html";
+                return;
+            }
+
+            const data = userDoc.data();
+
+            const fullName = data.fullName || localStorage.getItem("userFullName") || "";
+            const role     = data.role     || localStorage.getItem("userRole")     || "user";
+            const email    = data.email    || user.email || "";
+
+            // Populate header
+            document.getElementById("editAvatar").textContent      = getInitials(fullName);
+            document.getElementById("editHeaderName").textContent  = fullName || "Unknown User";
+            document.getElementById("editHeaderEmail").textContent = email;
+            document.getElementById("editHeaderRole").textContent  = formatRole(role);
+
+            // Populate form fields
+            document.getElementById("editFullName").value = fullName;
+            document.getElementById("editEmail").value    = email;
+            document.getElementById("editAddress").value  = data.address || "";
+            document.getElementById("editPhone").value    = data.phone   || "";
+            document.getElementById("editRole").value     = formatRole(role);
+
+            // Topbar
+            document.getElementById("userRoleLabel").textContent = fullName;
+
+        } catch (err) {
+            console.error("Error loading edit profile:", err);
+            alert("Failed to load profile. Please try again.");
+        }
+    });
+
+    // ── Save changes to Firestore (and Auth email if changed) ──
+    document.getElementById("editProfileForm")
+        .addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            if (!currentUser) {
+                alert("You are not logged in.");
+                window.location.href = "Login.html";
+                return;
+            }
+
+            const fullName = document.getElementById("editFullName").value.trim();
+            const email    = document.getElementById("editEmail").value.trim();
+            const address  = document.getElementById("editAddress").value.trim();
+            const phone    = document.getElementById("editPhone").value.trim();
+
+            try {
+                // Update Firestore document
+                await updateDoc(doc(db, "users", currentUser.uid), {
+                    fullName,
+                    email,
+                    address,
+                    phone
+                });
+
+                // Update Firebase Auth email only if it changed
+                if (email !== currentUser.email) {
+                    await updateEmail(currentUser, email);
+                }
+
+                // Keep localStorage in sync
+                localStorage.setItem("userFullName", fullName);
+                localStorage.setItem("userEmail",    email);
+
+                alert("Profile updated successfully!");
+                window.location.href = "Profile.html";
+
+            } catch (err) {
+                console.error("Error updating profile:", err);
+
+                // Firebase throws a specific error if re-authentication is needed
+                if (err.code === "auth/requires-recent-login") {
+                    alert("For security, please log out and log back in before changing your email.");
+                } else {
+                    alert("Failed to update profile: " + err.message);
+                }
+            }
+        });
+</script>
+
+<script type="module" src="sidebar.js"></script>
+<script type="module" src="role-ui.js"></script>
+
+</body>
+</html>

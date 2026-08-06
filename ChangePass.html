@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Change Password | AquaFRESH</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="ChangePass.css">
+  <link rel="icon" type="image/png" href="assets/AquaFRESH.png">
+
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="logo">AquaFRESH</div>
+    <div class="profile-menu">
+      <input type="checkbox" id="profile-toggle">
+      <label for="profile-toggle" class="profile-name">Admin <span class="caret">▾</span></label>
+      <div class="dropdown">
+        <a href="Dashboard.html">Dashboard</a>
+        <a href="Profile.html">Profile</a>
+        <a href="Login.html" class="logout">Logout</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main class="container">
+    <div class="profile-card">
+      <h2>Change Password</h2>
+
+      <form id="changePassForm">
+        <div class="form-group">
+          <label for="currentPassword">Current Password</label>
+          <input type="password" id="currentPassword" placeholder="Enter current password" required>
+        </div>
+        <div class="form-group">
+          <label for="newPassword">New Password</label>
+          <input type="password" id="newPassword" placeholder="Enter new password" required>
+        </div>
+        <div class="form-group">
+          <label for="confirmPassword">Confirm New Password</label>
+          <input type="password" id="confirmPassword" placeholder="Confirm new password" required>
+        </div>
+        <button type="submit">Change Password</button>
+        <div id="message"></div>
+      </form>
+    </div>
+  </main>
+
+  <script type="module">
+    import { auth } from "./firebase.js";
+    import { onAuthStateChanged, reauthenticateWithCredential, EmailAuthProvider, updatePassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    const form = document.getElementById("changePassForm");
+    const message = document.getElementById("message");
+
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        window.location.href = "Login.html";
+      }
+    });
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      message.textContent = "";
+
+      const currentPassword = document.getElementById("currentPassword").value;
+      const newPassword = document.getElementById("newPassword").value;
+      const confirmPassword = document.getElementById("confirmPassword").value;
+
+      if (newPassword !== confirmPassword) {
+        message.textContent = "New passwords do not match.";
+        message.style.color = "red";
+        return;
+      }
+
+      const user = auth.currentUser;
+      if (!user) return;
+
+      try {
+        const credential = EmailAuthProvider.credential(user.email, currentPassword);
+        await reauthenticateWithCredential(user, credential); // verify current password
+        await updatePassword(user, newPassword); // update to new password
+
+        message.textContent = "Password changed successfully!";
+        message.style.color = "green";
+        form.reset();
+      } catch (error) {
+        console.error(error);
+        if (error.code === "auth/wrong-password") {
+          message.textContent = "Current password is incorrect.";
+        } else if (error.code === "auth/weak-password") {
+          message.textContent = "New password is too weak (min 6 characters).";
+        } else {
+          message.textContent = "Error: " + error.message;
+        }
+        message.style.color = "red";
+      }
+    });
+  </script>
+
+</body>
+</html>

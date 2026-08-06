@@ -1,0 +1,310 @@
+@import url("DeliveryDashboard.css");
+
+/* =====================
+   PAGE HEADER
+===================== */
+.insp-page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+.insp-page-header h2 { color: #0f172a; font-size: 24px; font-weight: 700; }
+.subtitle { font-size: 14px; color: #64748b; margin-top: 4px; }
+
+.insp-header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+.insp-today-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #f0fdfa;
+    border: 1.5px solid #99f6e4;
+    color: #0f766e;
+    padding: 8px 16px;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    font-weight: 600;
+}
+.insp-today-badge i { font-size: 0.85rem; }
+.insp-today-badge strong { font-size: 1rem; }
+.insp-log-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #0f766e, #0d9488);
+    color: #fff;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: opacity 0.15s, transform 0.15s;
+    box-shadow: 0 4px 12px rgba(13,148,136,0.25);
+    white-space: nowrap;
+}
+.insp-log-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+/* =====================
+   FILTER BAR
+===================== */
+.insp-filter-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+.insp-search-wrap {
+    flex: 1;
+    min-width: 180px;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+.insp-search-wrap i {
+    position: absolute;
+    left: 10px;
+    color: #94a3b8;
+    font-size: 0.8rem;
+    pointer-events: none;
+}
+.insp-search-wrap input {
+    width: 100%;
+    padding: 8px 12px 8px 30px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-family: 'Inter', sans-serif;
+    color: #334155;
+    background: #f8fafc;
+    outline: none;
+    transition: border-color 0.15s;
+}
+.insp-search-wrap input:focus { border-color: #0d9488; background: #fff; }
+.insp-search-wrap input::placeholder { color: #cbd5e1; }
+.insp-filter-select {
+    padding: 8px 10px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-family: 'Inter', sans-serif;
+    color: #475569;
+    background: #f8fafc;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.15s;
+}
+.insp-filter-select:focus { border-color: #0d9488; }
+
+/* =====================
+   STATUS BADGES
+===================== */
+.status { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+.status.success { background: #dcfce7; color: #166534; }
+.status.warning { background: #fef9c3; color: #854d0e; }
+.status.danger  { background: #fee2e2; color: #991b1b; }
+
+/* =====================
+   NEEDS ATTENTION
+===================== */
+.task-list { list-style: none; font-size: 14px; }
+.task-list li { padding: 4px 0; }
+.task-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    background: #f8fafc;
+    padding: 12px 14px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    border: 1px solid #e2e8f0;
+    gap: 12px;
+}
+.task-sub { font-size: 12px; color: #64748b; margin-top: 2px; }
+.task-criteria { font-size: 11px; color: #94a3b8; margin-top: 3px; }
+.task-status {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+.task-status.success { background: #dcfce7; color: #166534; }
+.task-status.warning { background: #fef9c3; color: #854d0e; }
+.task-status.danger  { background: #fee2e2; color: #991b1b; }
+
+/* =====================
+   TAB BAR
+===================== */
+.insp-tab-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 6px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+.insp-tab {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: #64748b;
+    font-size: 0.88rem;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+.insp-tab:hover { background: #f8fafc; color: #334155; }
+.insp-tab.active { background: #0d9488; color: #fff; box-shadow: 0 2px 8px rgba(13,148,136,0.25); }
+.insp-tab.has-alerts { color: #ca8a04; }
+.insp-tab.has-alerts.active { background: #ca8a04; color: #fff; box-shadow: 0 2px 8px rgba(202,138,4,0.25); }
+.insp-tab-badge {
+    min-width: 20px;
+    height: 20px;
+    background: #e2e8f0;
+    color: #475569;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 5px;
+}
+.insp-tab.active .insp-tab-badge { background: rgba(255,255,255,0.3); color: #fff; }
+.insp-tab-badge.attention { background: #ca8a04; color: #fff; }
+.insp-tab.active .insp-tab-badge.attention { background: rgba(255,255,255,0.3); }
+
+/* =====================
+   TAB PANELS
+===================== */
+.insp-tab-panel { display: none; }
+.insp-tab-panel.active { display: block; }
+
+/* =====================
+   SCROLLABLE TABLE — TWO-DIV PATTERN
+   Same approach as Dashboard's .activity-scroll-container
+   Outer = vertical scroll, Inner = horizontal scroll
+===================== */
+.insp-table-outer {
+    max-height: 420px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+}
+.insp-table-outer::-webkit-scrollbar { width: 5px; }
+.insp-table-outer::-webkit-scrollbar-track { background: transparent; }
+.insp-table-outer::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+.insp-table-outer::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+.insp-table-inner {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+.insp-table-inner::-webkit-scrollbar { height: 5px; }
+.insp-table-inner::-webkit-scrollbar-track { background: transparent; }
+.insp-table-inner::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+.insp-table-inner .qc-table {
+    min-width: 480px;
+    width: 100%;
+}
+
+/* Sticky header stays visible while scrolling vertically */
+.insp-table-outer .qc-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: #f8fafc;
+}
+
+/* =====================
+   SIDEBAR COLLAPSE — DESKTOP
+===================== */
+.sidebar.collapsed { width: 80px; }
+.sidebar.collapsed .brand-text,
+.sidebar.collapsed .logo-full,
+.sidebar.collapsed .menu li a .label { display: none; }
+.sidebar.collapsed .logo-icon { display: block; margin: 0 auto; }
+.sidebar.collapsed .menu li a { justify-content: center; padding: 12px 0; }
+.sidebar.collapsed .menu li a i { margin-right: 0; width: auto; }
+.topbar.collapsed  { margin-left: 80px; width: calc(100% - 80px); }
+.content.collapsed { margin-left: 80px; }
+
+/* =====================
+   SIDEBAR OVERLAY & TOGGLE
+===================== */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 199;
+}
+#nav-toggle { display: none; }
+
+/* =====================
+   RESPONSIVE — MOBILE
+===================== */
+@media (max-width: 768px) {
+
+    .sidebar {
+        transform: translateX(-100%);
+        width: 260px !important;
+        transition: transform 0.25s ease;
+    }
+    #nav-toggle:checked ~ .sidebar { transform: translateX(0); }
+    #nav-toggle:checked ~ .sidebar-overlay { display: block; }
+
+    .sidebar .brand-text,
+    .sidebar .logo-full { display: block !important; }
+    .sidebar .logo-icon { display: none !important; }
+    .sidebar .menu li a .label { display: inline !important; }
+    .sidebar .menu li a { justify-content: flex-start !important; padding: 12px 16px !important; }
+    .sidebar .menu li a i { margin-right: 12px !important; }
+
+    .topbar { margin-left: 0 !important; width: 100% !important; padding: 0 16px; left: 0; right: 0; }
+    .content { margin-left: 0 !important; padding: 84px 16px 32px; }
+
+    .insp-page-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .insp-header-right { width: 100%; flex-direction: column; gap: 8px; }
+    .insp-today-badge { width: 100%; justify-content: center; }
+    .insp-log-btn { width: 100%; justify-content: center; }
+
+    .insp-filter-bar { flex-direction: column; gap: 8px; }
+    .insp-search-wrap { width: 100%; }
+    .insp-filter-select { width: 100%; }
+
+    .insp-tab-bar { padding: 4px; gap: 4px; }
+    .insp-tab { padding: 10px 8px; font-size: 0.82rem; gap: 5px; }
+    .insp-tab span:not(.insp-tab-badge) { display: none; }
+
+    /* Shorter scroll container on mobile */
+    .insp-table-outer { max-height: 360px; }
+
+    .panel { padding: 16px; }
+    .panel-header-flex { flex-wrap: wrap; gap: 6px; }
+    .task-card { flex-wrap: wrap; gap: 8px; }
+}
+
+@media (max-width: 480px) {
+    .insp-page-header h2 { font-size: 20px; }
+}

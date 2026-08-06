@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <title>Freshness Evaluation | AquaFRESH</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="FreshnessEvaluation.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <link rel="icon" type="image/png" href="assets/AquaFRESH.png">
+</head>
+<body>
+
+<input type="checkbox" id="nav-toggle">
+
+<aside class="sidebar">
+    <div class="brand">
+        <img src="assets/AquaFRESH.png" class="logo-full">
+        <img src="assets/ColAquaFRESH.png" class="logo-icon">
+        <p class="brand-text">Aquaculture Freshness Monitoring System</p>
+    </div>
+    <nav class="menu">
+        <ul>
+            <li data-role="superadmin admin manager"><a href="Dashboard.html"><i class="fa-solid fa-gauge"></i><span class="label">Dashboard</span></a></li>
+            <li data-role="inspector"><a href="InspectorDashboard.html"><i class="fa-solid fa-clipboard-check"></i><span class="label">Inspector Dashboard</span></a></li>
+            <li data-role="delivery"><a href="DeliveryDashboard.html"><i class="fa-solid fa-truck"></i><span class="label">Delivery Dashboard</span></a></li>
+            <li data-role="superadmin admin manager inspector"><a href="QualityControl.html"><i class="fa-solid fa-shield-halved"></i><span class="label">Quality Control</span></a></li>
+            <li data-role="superadmin admin manager inspector delivery"><a href="FreshnessEvaluation.html" class="active"><i class="fa-solid fa-water"></i><span class="label">Freshness Evaluation</span></a></li>
+            <li data-role="superadmin admin manager delivery"><a href="TransportDelivery.html"><i class="fa-solid fa-route"></i><span class="label">Transport &amp; Delivery</span></a></li>
+            <li data-role="superadmin admin manager delivery"><a href="AnalyticsReporting.html"><i class="fa-solid fa-chart-line"></i><span class="label">Analytics &amp; Reporting</span></a></li>
+            <li data-role="superadmin admin manager"><a href="UserManagement.html"><i class="fa-solid fa-users"></i><span class="label">User Management</span></a></li>
+        </ul>
+    </nav>
+</aside>
+
+<div class="sidebar-overlay" onclick="document.getElementById('nav-toggle').checked = false;"></div>
+
+<header class="topbar">
+    <label for="nav-toggle" class="menu-btn">☰</label>
+    <div class="profile-dropdown">
+        <input type="checkbox" id="profile-toggle">
+        <label for="profile-toggle" class="profile-trigger">
+            <span id="userRoleLabel">User</span> <span class="caret">▾</span>
+        </label>
+        <div class="dropdown-menu">
+            <a href="Profile.html">Profile</a>
+            <a href="Login.html" class="logout">Logout</a>
+        </div>
+    </div>
+</header>
+
+<main class="content">
+    <section class="page-header">
+        <h2>Freshness Evaluation</h2>
+        <p class="subtitle">Real-time assessment of fish freshness based on sensor data</p>
+    </section>
+
+    <section class="panel">
+        <div class="panel-header-flex">
+            <h3>Current Batch Overview</h3>
+            <span class="summary-hint">Click a card to view details</span>
+        </div>
+        <div class="qc-status-cards">
+            <div class="qc-status-card green" id="btn-fresh" role="button" tabindex="0">
+                <div class="card-icon"><i class="fa-solid fa-check-circle"></i></div>
+                <div class="card-info">
+                    <div class="card-title">Fresh</div>
+                    <div class="card-count" id="fresh-count">0</div>
+                    <div class="card-cta">View records →</div>
+                </div>
+                <i class="fa-solid fa-chevron-right card-arrow"></i>
+            </div>
+            <div class="qc-status-card yellow" id="btn-issues" role="button" tabindex="0">
+                <div class="card-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                <div class="card-info">
+                    <div class="card-title">With Issues</div>
+                    <div class="card-count" id="issues-count">0</div>
+                    <div class="card-cta">View records →</div>
+                </div>
+                <i class="fa-solid fa-chevron-right card-arrow"></i>
+            </div>
+            <div class="qc-status-card red" id="btn-spoiled" role="button" tabindex="0">
+                <div class="card-icon"><i class="fa-solid fa-circle-exclamation"></i></div>
+                <div class="card-info">
+                    <div class="card-title">Spoiled</div>
+                    <div class="card-count" id="spoiled-count">0</div>
+                    <div class="card-cta">View records →</div>
+                </div>
+                <i class="fa-solid fa-chevron-right card-arrow"></i>
+            </div>
+        </div>
+    </section>
+
+    <section class="panel">
+        <div class="panel-header-flex">
+            <h3>Batch Evaluation Data</h3>
+            <div class="header-actions">
+                <div class="search-box small">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="searchBatch" placeholder="Search Batch ID">
+                </div>
+                <button id="filterBtn" class="filter-btn"><i class="fa-solid fa-sliders"></i></button>
+            </div>
+        </div>
+        <div class="filter-dropdown" id="filterDropdown">
+            <div class="filter-group">
+                <label>Freshness Status</label>
+                <select id="filterStatus">
+                    <option value="">All</option>
+                    <option value="Passed">Fresh</option>
+                    <option value="With Issues">With Issues</option>
+                    <option value="Spoiled">Spoiled</option>
+                </select>
+            </div>
+            <div class="filter-actions">
+                <button id="applyFilter" class="btn apply">Apply</button>
+                <button id="clearFilter" class="btn clear">Clear</button>
+            </div>
+        </div>
+
+        <!-- Outer: vertical scroll container -->
+        <div class="fe-table-outer">
+            <!-- Inner: horizontal scroll container -->
+            <div class="fe-table-inner">
+                <table class="evaluation-table qc-table">
+                    <thead>
+                        <tr>
+                            <th>Batch ID</th>
+                            <th>Location</th>
+                            <th>Freshness Status</th>
+                            <th>Last Updated</th>
+                        </tr>
+                    </thead>
+                    <tbody id="all-freshness-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</main>
+
+<!-- MODAL: Fresh -->
+<div class="qc-modal-overlay" id="modal-fresh">
+    <div class="qc-modal wide">
+        <div class="qc-modal-header green">
+            <h3><i class="fa-solid fa-check-circle"></i> Fresh Batches</h3>
+            <button class="qc-modal-close" data-close="modal-fresh"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="qc-modal-body">
+            <table class="evaluation-table qc-table">
+                <thead><tr><th>Batch ID</th><th>Location</th><th>Freshness Status</th><th>Last Updated</th></tr></thead>
+                <tbody id="fresh-body"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: Issues -->
+<div class="qc-modal-overlay" id="modal-issues">
+    <div class="qc-modal wide">
+        <div class="qc-modal-header yellow">
+            <h3><i class="fa-solid fa-triangle-exclamation"></i> With Issues Batches</h3>
+            <button class="qc-modal-close" data-close="modal-issues"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="qc-modal-body">
+            <table class="evaluation-table qc-table">
+                <thead><tr><th>Batch ID</th><th>Location</th><th>Freshness Status</th><th>Last Updated</th></tr></thead>
+                <tbody id="issues-body"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: Spoiled -->
+<div class="qc-modal-overlay" id="modal-spoiled">
+    <div class="qc-modal wide">
+        <div class="qc-modal-header red">
+            <h3><i class="fa-solid fa-circle-exclamation"></i> Spoiled Batches</h3>
+            <button class="qc-modal-close" data-close="modal-spoiled"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="qc-modal-body">
+            <table class="evaluation-table qc-table">
+                <thead><tr><th>Batch ID</th><th>Location</th><th>Freshness Status</th><th>Last Updated</th></tr></thead>
+                <tbody id="spoiled-body"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script type="module" src="sidebar.js"></script>
+<script type="module" src="role-ui.js"></script>
+<script type="module" src="FreshnessEvaluation.js"></script>
+<script>
+    (function () {
+        function openModal(id) { const el = document.getElementById(id); if (el) el.classList.add('active'); document.body.style.overflow = 'hidden'; }
+        function closeModal(id) { const el = document.getElementById(id); if (el) el.classList.remove('active'); document.body.style.overflow = ''; }
+        document.getElementById('btn-fresh')?.addEventListener('click',   () => openModal('modal-fresh'));
+        document.getElementById('btn-issues')?.addEventListener('click',  () => openModal('modal-issues'));
+        document.getElementById('btn-spoiled')?.addEventListener('click', () => openModal('modal-spoiled'));
+        document.querySelectorAll('.qc-modal-close').forEach(btn => { btn.addEventListener('click', () => closeModal(btn.dataset.close)); });
+        document.querySelectorAll('.qc-modal-overlay').forEach(overlay => { overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(overlay.id); }); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') document.querySelectorAll('.qc-modal-overlay.active').forEach(el => closeModal(el.id)); });
+    })();
+</script>
+</body>
+</html>

@@ -1,0 +1,161 @@
+/* =====================
+   GLOBAL
+   ===================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    /* Maintaining your linear gradient background */
+    background: linear-gradient(135deg, #0f2f3f, #123f52); 
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* =====================
+   LOGIN CONTAINER
+   ===================== */
+.login-container {
+    width: 100%;
+    padding: 20px;
+}
+
+/* =====================
+   LOGIN CARD
+   ===================== */
+.login-card {
+    background: #ffffff;
+    max-width: 380px;
+    margin: auto;
+    border-radius: 14px;
+    padding: 32px 28px;
+    box-shadow: 0 18px 40px rgba(0,0,0,0.25);
+}
+
+/* =====================
+   BRANDING & LOGO
+   ===================== */
+.login-brand {
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+.login-logo {
+    max-width: 180px; 
+    height: auto;
+    margin-bottom: 10px;
+}
+
+.login-brand p {
+    font-size: 12px;
+    color: #34495e;
+    margin-top: 4px;
+}
+
+/* =====================
+   LOGIN FORM
+   ===================== */
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 6px;
+    color: #34495e;
+}
+
+.form-group input {
+    padding: 12px 14px;
+    border-radius: 8px;
+    border: 1px solid #dfe6e9;
+    font-size: 14px;
+    transition: border 0.2s ease;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #4dd0c8; /* Matches your brand color */
+}
+
+/* =====================
+   FORGOT PASSWORD
+   ===================== */
+.forgot-password {
+    text-align: right;
+    margin-top: -10px; /* Pulls it closer to the password field */
+    margin-bottom: 10px;
+}
+
+.forgot-password a {
+    font-size: 13px;
+    color: #4dd0c8; 
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.forgot-password a:hover {
+    color: #3cbfb7;
+    text-decoration: underline;
+}
+
+/* =====================
+   LOGIN BUTTON
+   ===================== */
+.login-btn {
+    background: #4dd0c8;
+    color: #0f2f3f;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.25s ease;
+}
+
+.login-btn:hover {
+    background: #3cbfb7;
+}
+
+/* =====================
+   SIGNUP & FOOTER
+   ===================== */
+.signup-text {
+    text-align: center;
+    font-size: 13px;
+    margin-top: 10px;
+    color: #34495e;
+}
+
+.signup-text a {
+    color: #4dd0c8;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.signup-text a:hover {
+    text-decoration: underline;
+}
+
+.login-footer {
+    text-align: center;
+    margin-top: 24px;
+    font-size: 11px;
+    color: #7f8c8d;
+    border-top: 1px solid #f1f3f4;
+    padding-top: 16px;
+}

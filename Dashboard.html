@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard | AquaFRESH</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="Dashboard.css">
+    <link rel="stylesheet" href="delay-bell.css">
+    <link rel="icon" type="image/png" href="assets/AquaFRESH.png">
+</head>
+<body>
+
+<!-- ① nav-toggle checkbox MUST be first in body -->
+<input type="checkbox" id="nav-toggle">
+
+<!-- ===================== SIDEBAR ===================== -->
+<aside class="sidebar">
+    <div class="brand">
+        <img src="assets/AquaFRESH.png" class="logo-full">
+        <img src="assets/ColAquaFRESH.png" class="logo-icon">
+        <p class="brand-text">Aquaculture Freshness Monitoring System</p>
+    </div>
+    <nav class="menu">
+        <ul>
+            <li data-role="superadmin admin manager"><a href="Dashboard.html" class="active"><i class="fa-solid fa-gauge"></i><span class="label">Dashboard</span></a></li>
+            <li data-role="inspector"><a href="InspectorDashboard.html"><i class="fa-solid fa-clipboard-check"></i><span class="label">Inspector Dashboard</span></a></li>
+            <li data-role="delivery"><a href="DeliveryDashboard.html"><i class="fa-solid fa-truck"></i><span class="label">Delivery Dashboard</span></a></li>
+            <li data-role="superadmin admin manager inspector"><a href="QualityControl.html"><i class="fa-solid fa-shield-halved"></i><span class="label">Quality Control</span></a></li>
+            <li data-role="superadmin admin manager inspector delivery"><a href="FreshnessEvaluation.html"><i class="fa-solid fa-water"></i><span class="label">Freshness Evaluation</span></a></li>
+            <li data-role="superadmin admin manager delivery"><a href="TransportDelivery.html"><i class="fa-solid fa-route"></i><span class="label">Transport &amp; Delivery</span></a></li>
+            <li data-role="superadmin admin manager delivery"><a href="AnalyticsReporting.html"><i class="fa-solid fa-chart-line"></i><span class="label">Analytics &amp; Reporting</span></a></li>
+            <li data-role="superadmin admin manager"><a href="UserManagement.html"><i class="fa-solid fa-users"></i><span class="label">User Management</span></a></li>
+        </ul>
+    </nav>
+</aside>
+
+<!-- ② overlay — closes drawer on mobile tap -->
+<div class="sidebar-overlay" onclick="document.getElementById('nav-toggle').checked = false;"></div>
+
+<!-- ===================== TOPBAR ===================== -->
+<!-- ③ menu-btn is a label not a span -->
+<header class="topbar">
+    <label for="nav-toggle" class="menu-btn">☰</label>
+    <div class="profile-dropdown">
+        <input type="checkbox" id="profile-toggle">
+        <label for="profile-toggle" class="profile-trigger">
+            <span id="userRoleLabel">User</span> <span class="caret">▾</span>
+        </label>
+        <div class="dropdown-menu">
+            <a href="Profile.html">Profile</a>
+            <a href="Login.html" class="logout">Logout</a>
+        </div>
+    </div>
+</header>
+
+<main class="content">
+
+    <section class="page-header">
+        <h2>System Dashboard</h2>
+        <p class="subtitle">Real-time overview of all aquaculture operations</p>
+    </section>
+
+    <!-- Tab Switcher Bar -->
+    <div class="section-tabs-bar">
+        <button class="section-tab-btn active" data-target="tab-recent">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            <span>Recent Activity</span>
+        </button>
+        <div class="section-tab-divider"></div>
+        <button class="section-tab-btn" data-target="tab-qc">
+            <i class="fa-solid fa-shield-halved"></i>
+            <span>Quality Control</span>
+        </button>
+        <div class="section-tab-divider"></div>
+        <button class="section-tab-btn" data-target="tab-transport">
+            <i class="fa-solid fa-truck"></i>
+            <span>Transport</span>
+        </button>
+    </div>
+
+    <!-- Recent Activity Panel -->
+    <section class="dash-section tab-content active" id="tab-recent">
+        <div class="dash-section-header recent">
+            <div class="dash-section-title">
+                <div class="dash-section-icon recent"><i class="fa-solid fa-clock-rotate-left"></i></div>
+                <div>
+                    <div class="dash-section-name">Recent Activity</div>
+                    <div class="dash-section-sub">Latest actions across all modules</div>
+                </div>
+            </div>
+            <span class="live-indicator"><i class="fa-solid fa-circle-dot"></i> Live</span>
+        </div>
+        <div class="dash-filter-bar">
+            <div class="dash-search-wrap">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="recent-search" placeholder="Search module or details...">
+            </div>
+            <!-- Level 1: Module filter -->
+            <select id="recent-filter-module" class="dash-filter-select">
+                <option value="">All Modules</option>
+                <option value="qc">Quality Control</option>
+                <option value="transport">Transport &amp; Delivery</option>
+                <option value="customer">Customer</option>
+            </select>
+            <!-- Level 2: Status filter — updates dynamically based on module -->
+            <select id="recent-sort-status" class="dash-filter-select">
+                <option value="">All Statuses</option>
+            </select>
+            <select id="recent-sort-date" class="dash-filter-select">
+                <option value="desc">Newest First</option>
+                <option value="asc">Oldest First</option>
+            </select>
+        </div>
+        <!-- Scrollable recent activity container -->
+        <div class="activity-scroll-container">
+            <div class="table-responsive">
+                <table class="modern-table">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Module</th>
+                            <th>Action Details</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recent-activity-body">
+                        <tr><td colspan="4" class="text-center empty-row">Loading live data...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quality Control Panel -->
+    <section class="dash-section tab-content" id="tab-qc">
+        <div class="dash-section-header qc">
+            <div class="dash-section-title">
+                <div class="dash-section-icon qc"><i class="fa-solid fa-shield-halved"></i></div>
+                <div>
+                    <div class="dash-section-name">Quality Control</div>
+                    <div class="dash-section-sub">All inspection records by result</div>
+                </div>
+            </div>
+            <a href="QualityControl.html" class="view-all-link">Open Quality Control &rarr;</a>
+        </div>
+        <div class="dash-filter-bar">
+            <div class="dash-search-wrap">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="qc-search" placeholder="Search batch ID or inspector...">
+            </div>
+            <select id="qc-filter-location" class="dash-filter-select">
+                <option value="">All Locations</option>
+                <option value="CLHC Binondo">CLHC Binondo</option>
+                <option value="CLHC Zambales">CLHC Zambales</option>
+            </select>
+            <select id="qc-sort-date" class="dash-filter-select">
+                <option value="desc">Newest First</option>
+                <option value="asc">Oldest First</option>
+            </select>
+        </div>
+
+        <!-- Passed -->
+        <div class="transport-sub-section">
+            <div class="transport-sub-header qc-passed-header">
+                <i class="fa-solid fa-circle-check"></i>
+                <span>Passed</span>
+                <span class="transport-sub-count" id="dash-passed-count">0</span>
+            </div>
+            <div class="table-responsive">
+                <table class="modern-table">
+                    <thead>
+                        <tr><th>Batch ID</th><th>Inspector</th><th>Product</th><th>Location</th><th>Date</th><th>Result</th></tr>
+                    </thead>
+                    <tbody id="qc-passed-body">
+                        <tr><td colspan="6" class="text-center empty-row">No passed inspections.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- With Issues -->
+        <div class="transport-sub-section">
+            <div class="transport-sub-header qc-issues-header">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <span>With Issues</span>
+                <span class="transport-sub-count" id="dash-issues-count">0</span>
+            </div>
+            <div class="table-responsive">
+                <table class="modern-table">
+                    <thead>
+                        <tr><th>Batch ID</th><th>Inspector</th><th>Product</th><th>Location</th><th>Date</th><th>Result</th></tr>
+                    </thead>
+                    <tbody id="qc-issues-body">
+                        <tr><td colspan="6" class="text-center empty-row">No inspections with issues.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Rejected -->
+        <div class="transport-sub-section">
+            <div class="transport-sub-header qc-rejected-header">
+                <i class="fa-solid fa-circle-xmark"></i>
+                <span>Rejected</span>
+                <span class="transport-sub-count" id="dash-rejected-count">0</span>
+            </div>
+            <div class="table-responsive">
+                <table class="modern-table">
+                    <thead>
+                        <tr><th>Batch ID</th><th>Inspector</th><th>Product</th><th>Location</th><th>Date</th><th>Result</th></tr>
+                    </thead>
+                    <tbody id="qc-rejected-body">
+                        <tr><td colspan="6" class="text-center empty-row">No rejected inspections.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- Transport Panel -->
+    <section class="dash-section tab-content" id="tab-transport">
+        <div class="dash-section-header transport">
+            <div class="dash-section-title">
+                <div class="dash-section-icon transport"><i class="fa-solid fa-truck"></i></div>
+                <div>
+                    <div class="dash-section-name">Transport &amp; Delivery</div>
+                    <div class="dash-section-sub">All delivery records by status</div>
+                </div>
+            </div>
+            <a href="TransportDelivery.html" class="view-all-link">Open Transport &rarr;</a>
+        </div>
+        <div class="dash-filter-bar">
+            <div class="dash-search-wrap">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="transport-search" placeholder="Search delivery ID, batch or driver...">
+            </div>
+            <select id="transport-sort-date" class="dash-filter-select">
+                <option value="desc">Newest First</option>
+                <option value="asc">Oldest First</option>
+            </select>
+        </div>
+
+        <!-- Active -->
+        <div class="transport-sub-section">
+            <div class="transport-sub-header active-header">
+                <i class="fa-solid fa-truck-fast"></i>
+                <span>Active</span>
+                <span class="transport-sub-count" id="dash-active-count">0</span>
+            </div>
+            <div class="table-responsive">
+                <table class="modern-table">
+                    <thead>
+                        <tr><th>Delivery ID</th><th>Batch</th><th>Truck</th><th>Driver</th><th>Origin</th><th>Destination</th><th>ETA</th><th>Status</th></tr>
+                    </thead>
+                    <tbody id="transport-active-body">
+                        <tr><td colspan="8" class="text-center empty-row">No active deliveries.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Delayed -->
+        <div class="transport-sub-section">
+            <div class="transport-sub-header delayed-header">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <span>Delayed</span>
+                <span class="transport-sub-count" id="dash-delayed-count">0</span>
+            </div>
+            <div class="table-responsive">
+                <table class="modern-table">
+                    <thead>
+                        <tr><th>Delivery ID</th><th>Batch</th><th>Truck</th><th>Driver</th><th>Origin</th><th>Destination</th><th>ETA</th><th>Status</th></tr>
+                    </thead>
+                    <tbody id="transport-delayed-body">
+                        <tr><td colspan="8" class="text-center empty-row">No delayed deliveries.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Delivered -->
+        <div class="transport-sub-section">
+            <div class="transport-sub-header delivered-header">
+                <i class="fa-solid fa-box-check"></i>
+                <span>Delivered</span>
+                <span class="transport-sub-count" id="dash-delivered-count">0</span>
+            </div>
+            <div class="table-responsive">
+                <table class="modern-table">
+                    <thead>
+                        <tr><th>Delivery ID</th><th>Batch</th><th>Truck</th><th>Driver</th><th>Origin</th><th>Destination</th><th>Delivered At</th><th>Status</th></tr>
+                    </thead>
+                    <tbody id="transport-delivered-body">
+                        <tr><td colspan="8" class="text-center empty-row">No delivered records yet.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </section>
+
+</main>
+
+<script type="module" src="sidebar.js"></script>
+<script type="module" src="role-ui.js"></script>
+<script type="module" src="Dashboard.js"></script>
+<script type="module" src="delay-bell.js"></script>
+
+<script>
+    // Switch to a specific tab and scroll to it
+    function switchTab(tabId) {
+        document.querySelectorAll('.section-tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        const targetContent = document.getElementById(tabId);
+        const targetBtn = document.querySelector(`.section-tab-btn[data-target="${tabId}"]`);
+        if (targetContent) targetContent.classList.add('active');
+        if (targetBtn) targetBtn.classList.add('active');
+        targetContent?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    document.querySelectorAll('.section-tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => switchTab(btn.dataset.target));
+    });
+
+    // ── 2-level filter: Module → Status ──────────────────────────────
+    const STATUS_OPTIONS = {
+        qc: [
+            { value: "Passed",      label: "Passed"      },
+            { value: "With Issues", label: "With Issues" },
+            { value: "Rejected",    label: "Rejected"    }
+        ],
+        transport: [
+            { value: "pending",   label: "Pending"   },
+            { value: "en_route",  label: "En Route"  },
+            { value: "delivered", label: "Delivered" },
+            { value: "delayed",   label: "Delayed"   }
+        ],
+        customer: [                                    // ← ADD THIS
+        { value: "received",  label: "Received"  }
+        ]
+    };
+
+    const moduleSelect = document.getElementById("recent-filter-module");
+    const statusSelect = document.getElementById("recent-sort-status");
+
+    function updateStatusOptions(module) {
+        // Reset status dropdown
+        statusSelect.innerHTML = '<option value="">All Statuses</option>';
+        statusSelect.disabled  = !module;
+
+        if (!module) return;
+
+        STATUS_OPTIONS[module].forEach(opt => {
+            const el = document.createElement("option");
+            el.value       = opt.value;
+            el.textContent = opt.label;
+            statusSelect.appendChild(el);
+        });
+    }
+
+    moduleSelect.addEventListener("change", () => {
+        updateStatusOptions(moduleSelect.value);
+        // Reset status selection and trigger re-filter in Dashboard.js
+        statusSelect.value = "";
+        statusSelect.dispatchEvent(new Event("change"));
+        // Also trigger input event so Dashboard.js renderActivities picks up module change
+        moduleSelect.dispatchEvent(new Event("input"));
+    });
+
+    // Initialize — status starts disabled until module is chosen
+    updateStatusOptions("");
+</script>
+
+</body>
+</html>

@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <title>Quality Control | AquaFRESH</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="QualityControl.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <link rel="icon" type="image/png" href="assets/AquaFRESH.png">
+    <link rel="stylesheet" href="delay-bell.css">
+</head>
+<body>
+
+<!-- ① checkbox MUST be first in body, before sidebar -->
+<input type="checkbox" id="nav-toggle">
+
+<!-- ===================== SIDEBAR ===================== -->
+<aside class="sidebar">
+    <div class="brand">
+        <img src="assets/AquaFRESH.png" class="logo-full">
+        <img src="assets/ColAquaFRESH.png" class="logo-icon">
+        <p class="brand-text">Aquaculture Freshness Monitoring System</p>
+    </div>
+    <nav class="menu">
+        <ul>
+            <li data-role="superadmin admin manager"><a href="Dashboard.html"><i class="fa-solid fa-gauge"></i><span class="label">Dashboard</span></a></li>
+            <li data-role="inspector"><a href="InspectorDashboard.html"><i class="fa-solid fa-clipboard-check"></i><span class="label">Inspector Dashboard</span></a></li>
+            <li data-role="delivery"><a href="DeliveryDashboard.html"><i class="fa-solid fa-truck"></i><span class="label">Delivery Dashboard</span></a></li>
+            <li data-role="superadmin admin manager inspector"><a href="QualityControl.html" class="active"><i class="fa-solid fa-shield-halved"></i><span class="label">Quality Control</span></a></li>
+            <li data-role="superadmin admin manager inspector delivery"><a href="FreshnessEvaluation.html"><i class="fa-solid fa-water"></i><span class="label">Freshness Evaluation</span></a></li>
+            <li data-role="superadmin admin manager delivery"><a href="TransportDelivery.html"><i class="fa-solid fa-route"></i><span class="label">Transport &amp; Delivery</span></a></li>
+            <li data-role="superadmin admin manager"><a href="AnalyticsReporting.html"><i class="fa-solid fa-chart-line"></i><span class="label">Analytics &amp; Reporting</span></a></li>
+            <li data-role="superadmin admin manager"><a href="UserManagement.html"><i class="fa-solid fa-users"></i><span class="label">User Management</span></a></li>
+        </ul>
+    </nav>
+</aside>
+
+<!-- ② overlay — closes drawer on mobile tap -->
+<div class="sidebar-overlay" onclick="document.getElementById('nav-toggle').checked = false;"></div>
+
+<!-- ===================== TOPBAR ===================== -->
+<!-- ③ menu-btn MUST be a <label> pointing to nav-toggle, not a <span> -->
+<header class="topbar">
+    <label for="nav-toggle" class="menu-btn">☰</label>
+    <div class="profile-dropdown">
+        <input type="checkbox" id="profile-toggle">
+        <label for="profile-toggle" class="profile-trigger">
+            <span id="userRoleLabel">User</span>
+            <span class="caret">▾</span>
+        </label>
+        <div class="dropdown-menu">
+            <a href="Profile.html">Profile</a>
+            <a href="Login.html" class="logout">Logout</a>
+        </div>
+    </div>
+</header>
+
+<!-- ===================== MAIN CONTENT ===================== -->
+<main class="content">
+
+    <section class="page-header">
+        <h2>Quality Control Logging</h2>
+        <p class="subtitle">Digital inspection records for on-site quality assessments</p>
+    </section>
+
+    <!-- New Inspection Trigger -->
+    <section class="panel panel-trigger">
+        <button class="new-inspection-trigger" id="btn-new-inspection" aria-label="Open New Inspection Log">
+            <div class="ni-trigger-icon"><i class="fa-solid fa-plus"></i></div>
+            <div class="ni-trigger-text">
+                <h3>New Inspection Log</h3>
+                <p>Fill in batch details and quality criteria for fish or shrimp</p>
+            </div>
+            <i class="fa-solid fa-arrow-right ni-trigger-arrow"></i>
+        </button>
+    </section>
+
+    <!-- Inspections Today -->
+    <section class="panel">
+        <div class="panel-header-flex">
+            <h3>Inspections Today (<span id="inspections-today-count">0</span>)</h3>
+        </div>
+        <div class="insp-today-scroll-container">
+            <div class="insp-card-list" id="inspections-today-body"></div>
+            <div class="insp-card-empty" id="inspections-today-empty" style="display:none;">
+                <i class="fa-solid fa-clipboard"></i> No inspections logged today yet.
+            </div>
+        </div>
+    </section>
+
+    <!-- Inspection Status Summary Cards -->
+    <section class="panel">
+        <div class="panel-header-flex">
+            <h3>Inspection Status Summary</h3>
+            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+                <span class="summary-hint">Click a card to view details</span>
+                <button class="disposal-icon-btn" id="btn-for-disposal" aria-label="View For Disposal" title="For Disposal">
+                    <i class="fa-solid fa-trash-can-arrow-up"></i>
+                    <span class="disposal-count-badge" id="disposal-count-badge" style="display:none;">0</span>
+                </button>
+            </div>
+        </div>
+        <div class="qc-status-cards">
+
+            <div class="qc-status-card green" id="btn-passed" role="button" tabindex="0" aria-label="View Passed Inspections">
+                <div class="card-icon"><i class="fa-solid fa-circle-check"></i></div>
+                <div class="card-info">
+                    <div class="card-title">Passed</div>
+                    <div class="card-count" id="passed-count">0</div>
+                    <div class="card-cta">View records →</div>
+                </div>
+                <i class="fa-solid fa-chevron-right card-arrow"></i>
+            </div>
+
+            <div class="qc-status-card yellow" id="btn-issues" role="button" tabindex="0" aria-label="View Inspections with Issues">
+                <div class="card-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                <div class="card-info">
+                    <div class="card-title">With Issues</div>
+                    <div class="card-count" id="issues-count">0</div>
+                    <div class="card-cta">View records →</div>
+                </div>
+                <i class="fa-solid fa-chevron-right card-arrow"></i>
+            </div>
+
+            <div class="qc-status-card red" id="btn-rejected" role="button" tabindex="0" aria-label="View Rejected Inspections">
+                <div class="card-icon"><i class="fa-solid fa-circle-xmark"></i></div>
+                <div class="card-info">
+                    <div class="card-title">Rejected</div>
+                    <div class="card-count" id="rejected-count">0</div>
+                    <div class="card-cta">View records →</div>
+                </div>
+                <i class="fa-solid fa-chevron-right card-arrow"></i>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Data Management -->
+    <section class="panel">
+        <div class="panel-header-flex" style="margin-bottom: 16px;">
+            <h3>Data Management</h3>
+        </div>
+        <div class="qc-action-cards">
+
+            <div class="qc-action-card">
+                <div class="qc-action-icon blue"><i class="fa-solid fa-file-pdf"></i></div>
+                <div class="qc-action-info">
+                    <div class="qc-action-title">Inspection Reports</div>
+                    <div class="qc-action-desc">Generate a formatted QC report — summary, spoilage analysis, and full records.</div>
+                </div>
+                <button id="download-delivery-report-btn" class="qc-action-btn blue">
+                    <i class="fa-solid fa-file-pdf"></i> Generate Report
+                </button>
+            </div>
+
+            <div class="qc-action-card">
+                <div class="qc-action-icon red"><i class="fa-solid fa-trash-can"></i></div>
+                <div class="qc-action-info">
+                    <div class="qc-action-title">Clear Inspection Records</div>
+                    <div class="qc-action-desc">Remove all inspection records from the system. This action cannot be undone.</div>
+                </div>
+                <button id="clear-all-data-btn" class="qc-action-btn red">
+                    <i class="fa-solid fa-trash-can"></i> Clear Records
+                </button>
+            </div>
+
+        </div>
+    </section>
+
+</main>
+
+<!-- ===================== MODAL: Clear Data Warning ===================== -->
+<div class="qc-modal-overlay" id="modal-clear-warning">
+    <div class="qc-modal" style="max-width:480px;">
+        <div class="qc-modal-header red">
+            <h3><i class="fa-solid fa-triangle-exclamation"></i> Clear All Data</h3>
+            <button class="qc-modal-close" data-close="modal-clear-warning" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="qc-modal-body" style="padding: 28px 24px;">
+            <div style="text-align:center; margin-bottom: 20px;">
+                <div style="width:64px;height:64px;background:#fee2e2;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.8rem;color:#dc2626;">
+                    <i class="fa-solid fa-trash-can"></i>
+                </div>
+                <p style="font-size:0.95rem;color:#1e293b;font-weight:600;margin-bottom:8px;">Clear all inspection records?</p>
+                <p style="font-size:0.84rem;color:#64748b;">All inspection logs will be permanently removed. This action cannot be undone.</p>
+            </div>
+            <div style="display:flex;gap:12px;justify-content:center;">
+                <button class="ni-btn-clear" id="cancel-clear-btn" style="min-width:120px;">
+                    <i class="fa-solid fa-xmark"></i> Cancel
+                </button>
+                <button id="confirm-clear-btn" style="min-width:120px;padding:9px 22px;background:#dc2626;border:none;border-radius:8px;font-size:0.88rem;font-weight:700;color:#fff;cursor:pointer;transition:opacity 0.15s;">
+                    <i class="fa-solid fa-trash-can"></i> Yes, Delete All
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===================== MODAL: Product Type Chooser ===================== -->
+<div class="qc-modal-overlay" id="modal-product-chooser">
+    <div class="qc-modal" style="max-width:520px;">
+        <div class="qc-modal-header teal">
+            <h3><i class="fa-solid fa-clipboard-list"></i> New Inspection Log</h3>
+            <button class="qc-modal-close" data-close="modal-product-chooser" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="qc-modal-body" style="padding: 32px 28px;">
+            <p class="chooser-heading">What would you like to log today?</p>
+            <p class="chooser-sub">Select the product type to load the appropriate quality criteria.</p>
+            <div class="chooser-options">
+                <button class="chooser-card" id="choose-fish" data-type="fish">
+                    <div class="chooser-card-icon fish"><i class="fa-solid fa-fish"></i></div>
+                    <div class="chooser-card-body">
+                        <div class="chooser-card-title">Fish</div>
+                        <div class="chooser-card-products">Bangus &nbsp;·&nbsp; Tilapia</div>
+                        <div class="chooser-card-criteria">Eye · Gill · Odor · Firmness</div>
+                    </div>
+                    <i class="fa-solid fa-arrow-right chooser-arrow"></i>
+                </button>
+                <button class="chooser-card" id="choose-shrimp" data-type="shrimp">
+                    <div class="chooser-card-icon shrimp"><i class="fa-solid fa-shrimp"></i></div>
+                    <div class="chooser-card-body">
+                        <div class="chooser-card-title">Fresh Water Shrimp</div>
+                        <div class="chooser-card-products">Fresh Water Shrimp</div>
+                        <div class="chooser-card-criteria">Shell · Odor · Texture · Tail</div>
+                    </div>
+                    <i class="fa-solid fa-arrow-right chooser-arrow"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===================== MODAL: New / Edit Inspection Log ===================== -->
+<div class="qc-modal-overlay" id="modal-new-inspection">
+    <div class="qc-modal wide">
+        <div class="qc-modal-header teal">
+            <h3 id="modal-inspection-title"><i class="fa-solid fa-clipboard-list"></i> New Inspection Log</h3>
+            <button class="qc-modal-close" data-close="modal-new-inspection" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="qc-modal-body">
+            <div class="ni-product-badge-row">
+                <div id="ni-product-badge" class="ni-product-badge fish">
+                    <i class="fa-solid fa-fish"></i>
+                    <span id="ni-product-badge-label">Fish Inspection</span>
+                </div>
+                <button class="ni-change-type-btn" id="ni-change-type-btn">
+                    <i class="fa-solid fa-arrows-rotate"></i> Change Type
+                </button>
+            </div>
+            <div class="ni-divider"><i class="fa-solid fa-tag"></i> Batch Details</div>
+            <div class="ni-modal-grid">
+                <div class="ni-form-group">
+                    <label>Batch ID <span style="font-size:0.72rem;color:#94a3b8;font-weight:400;">(auto-generated)</span></label>
+                    <input type="text" id="batch-code" placeholder="Generating..." readonly style="background:#f1f5f9;color:#94a3b8;cursor:not-allowed;">
+                </div>
+                <div class="ni-form-group">
+                    <label>Inspection Location</label>
+                    <select id="inspection-location">
+                        <option value="" disabled selected>Select Location</option>
+                        <option value="CLHC Binondo">CLHC Binondo</option>
+                        <option value="CLHC Zambales">CLHC Zambales</option>
+                    </select>
+                </div>
+                <div class="ni-form-group">
+                    <label>Product Type</label>
+                    <select id="product-type">
+                        <option value="" disabled selected>Select Product</option>
+                        <option value="Bangus">Bangus</option>
+                        <option value="Tilapia">Tilapia</option>
+                    </select>
+                </div>
+            </div>
+            <div class="ni-divider"><i class="fa-solid fa-list-check"></i> Quality Criteria</div>
+            <div style="overflow-x:auto; -webkit-overflow-scrolling:touch;">
+                <table class="ni-criteria-table">
+                    <thead>
+                        <tr>
+                            <th>Criteria</th>
+                            <th>Weight</th>
+                            <th>Assessment</th>
+                            <th>Remarks</th>
+                        </tr>
+                    </thead>
+                    <tbody id="new-inspection-tbody"></tbody>
+                </table>
+            </div>
+            <div id="score-container" class="ni-score-widget">
+                <div>
+                    <div class="ni-score-label">Live Freshness Score</div>
+                    <div>
+                        <span id="live-score" class="ni-score-val">100</span>
+                        <span class="ni-score-max"> / 100</span>
+                    </div>
+                </div>
+                <div class="ni-score-right">
+                    <div class="ni-score-label">Classification</div>
+                    <div id="live-classification" class="status success"><i class="fa-solid fa-check"></i> Passed</div>
+                </div>
+            </div>
+        </div>
+        <div class="ni-modal-footer">
+            <button class="ni-btn-clear" id="add-inspection-btn">Clear Form</button>
+            <button class="ni-btn-save" id="save-inspection-btn"><i class="fa-solid fa-floppy-disk"></i> Save Inspection Log</button>
+        </div>
+    </div>
+</div>
+
+<!-- ===================== MODAL: Passed Inspections ===================== -->
+<div class="qc-modal-overlay" id="modal-passed">
+    <div class="qc-modal">
+        <div class="qc-modal-header green">
+            <h3><i class="fa-solid fa-circle-check"></i> Passed Inspections <span class="modal-count-badge" id="modal-passed-count">0</span></h3>
+            <button class="qc-modal-close" data-close="modal-passed" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="qc-modal-body">
+            <table class="qc-table">
+                <thead>
+                    <tr><th>Batch ID</th><th>Inspector</th><th>Product</th><th>Location</th><th>Remarks</th><th>Date</th><th class="text-right">Status</th><th>Actions</th></tr>
+                </thead>
+                <tbody id="passed-body"></tbody>
+            </table>
+            <div class="qc-modal-empty" id="passed-empty" style="display:none;">
+                <i class="fa-solid fa-inbox"></i> No passed inspections yet.
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===================== MODAL: Inspections With Issues ===================== -->
+<div class="qc-modal-overlay" id="modal-issues">
+    <div class="qc-modal">
+        <div class="qc-modal-header yellow">
+            <h3><i class="fa-solid fa-triangle-exclamation"></i> Inspections With Issues <span class="modal-count-badge" id="modal-issues-count">0</span></h3>
+            <button class="qc-modal-close" data-close="modal-issues" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="qc-modal-body">
+            <table class="qc-table">
+                <thead>
+                    <tr><th>Batch ID</th><th>Inspector</th><th>Product</th><th>Location</th><th>Issue Noted</th><th>Date</th><th class="text-right">Status</th><th>Actions</th></tr>
+                </thead>
+                <tbody id="issues-body"></tbody>
+            </table>
+            <div class="qc-modal-empty" id="issues-empty" style="display:none;">
+                <i class="fa-solid fa-inbox"></i> No inspections with issues.
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===================== MODAL: Rejected Inspections ===================== -->
+<div class="qc-modal-overlay" id="modal-rejected">
+    <div class="qc-modal">
+        <div class="qc-modal-header red">
+            <h3><i class="fa-solid fa-circle-xmark"></i> Rejected Inspections <span class="modal-count-badge" id="modal-rejected-count">0</span></h3>
+            <button class="qc-modal-close" data-close="modal-rejected" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="qc-modal-body">
+            <table class="qc-table">
+                <thead>
+                    <tr><th>Batch ID</th><th>Inspector</th><th>Product</th><th>Location</th><th>Reason for Rejection</th><th>Date</th><th class="text-right">Status</th><th>Actions</th></tr>
+                </thead>
+                <tbody id="rejected-body"></tbody>
+            </table>
+            <div class="qc-modal-empty" id="rejected-empty" style="display:none;">
+                <i class="fa-solid fa-inbox"></i> No rejected inspections.
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===================== MODAL: For Disposal ===================== -->
+<div class="qc-modal-overlay" id="modal-disposal">
+    <div class="qc-modal wide">
+        <div class="qc-modal-header disposal">
+            <h3><i class="fa-solid fa-trash-can-arrow-up"></i> For Disposal <span class="modal-count-badge" id="modal-disposal-count">0</span></h3>
+            <button class="qc-modal-close" data-close="modal-disposal" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="qc-modal-body">
+            <div class="disposal-info-banner">
+                <i class="fa-solid fa-circle-info"></i>
+                <span><strong>Rejected</strong> batches are auto-disposed. <strong>With Issues</strong> can be disposed or continued.</span>
+            </div>
+            <div class="disposal-tabs-row">
+                <div class="disposal-tabs">
+                    <button class="disposal-tab active" data-dtab="issues">With Issues</button>
+                    <button class="disposal-tab" data-dtab="disposed">Disposed</button>
+                </div>
+                <button class="clear-disposed-btn" id="clear-disposed-btn" style="display:none;">
+                    <i class="fa-solid fa-broom"></i> Clear Disposed Records
+                </button>
+            </div>
+            <table class="qc-table" id="disposal-table">
+                <thead>
+                    <tr>
+                        <th>Batch ID</th><th>Inspector</th><th>Product</th><th>Location</th><th>Issue / Reason</th><th>Date</th><th>Status</th><th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="disposal-body"></tbody>
+            </table>
+            <div class="qc-modal-empty" id="disposal-empty" style="display:none;">
+                <i class="fa-solid fa-inbox"></i> No records found.
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===================== SCRIPTS ===================== -->
+<script type="module" src="sidebar.js"></script>
+<script type="module" src="role-ui.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.4/dist/jspdf.plugin.autotable.min.js"></script>
+<script type="module" src="QualityControl.js"></script>
+
+<script>
+    (function () {
+        function openModal(id) {
+            const el = document.getElementById(id);
+            if (el) el.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            syncEmpty(id);
+        }
+        function closeModal(id) {
+            const el = document.getElementById(id);
+            if (el) el.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        function syncEmpty(modalId) {
+            const map = {
+                'modal-passed':   { body: 'passed-body',   empty: 'passed-empty' },
+                'modal-issues':   { body: 'issues-body',   empty: 'issues-empty' },
+                'modal-rejected': { body: 'rejected-body', empty: 'rejected-empty' }
+            };
+            const m = map[modalId];
+            if (!m) return;
+            const rows  = document.getElementById(m.body);
+            const empty = document.getElementById(m.empty);
+            if (!rows || !empty) return;
+            empty.style.display = rows.children.length === 0 ? 'block' : 'none';
+        }
+
+        document.getElementById('btn-passed').addEventListener('click',   () => openModal('modal-passed'));
+        document.getElementById('btn-issues').addEventListener('click',   () => openModal('modal-issues'));
+        document.getElementById('btn-rejected').addEventListener('click', () => openModal('modal-rejected'));
+        document.getElementById('btn-for-disposal').addEventListener('click', () => openModal('modal-disposal'));
+
+        ['btn-passed', 'btn-issues', 'btn-rejected'].forEach(id => {
+            document.getElementById(id).addEventListener('keydown', e => {
+                if (e.key === 'Enter' || e.key === ' ') e.currentTarget.click();
+            });
+        });
+
+        const saveBtn = document.getElementById('save-inspection-btn');
+        if (saveBtn) {
+            saveBtn.addEventListener('click', () => {
+                setTimeout(() => closeModal('modal-new-inspection'), 300);
+            }, { capture: false });
+        }
+
+        document.querySelectorAll('.qc-modal-close').forEach(btn => {
+            btn.addEventListener('click', () => closeModal(btn.dataset.close));
+        });
+
+        document.querySelectorAll('.qc-modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', e => {
+                if (e.target === overlay) closeModal(overlay.id);
+            });
+        });
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.qc-modal-overlay.active').forEach(el => closeModal(el.id));
+            }
+        });
+
+        const countMap = {
+            'passed-count':   'modal-passed-count',
+            'issues-count':   'modal-issues-count',
+            'rejected-count': 'modal-rejected-count'
+        };
+        Object.entries(countMap).forEach(([srcId, dstId]) => {
+            const src = document.getElementById(srcId);
+            const dst = document.getElementById(dstId);
+            if (!src || !dst) return;
+            dst.textContent = src.textContent;
+            new MutationObserver(() => { dst.textContent = src.textContent; })
+                .observe(src, { childList: true, characterData: true, subtree: true });
+        });
+    })();
+</script>
+
+<script type="module" src="delay-bell.js"></script>
+</body>
+</html>

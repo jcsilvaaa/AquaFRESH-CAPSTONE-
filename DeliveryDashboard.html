@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <title>Delivery Dashboard | AquaFRESH</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="DeliveryDashboard.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <link rel="icon" type="image/png" href="assets/AquaFRESH.png">
+</head>
+<body>
+
+<!-- nav-toggle MUST come before sidebar and overlay as siblings -->
+<input type="checkbox" id="nav-toggle">
+
+<aside class="sidebar">
+    <div class="brand">
+        <img src="assets/AquaFRESH.png" class="logo-full">
+        <img src="assets/ColAquaFRESH.png" class="logo-icon">
+        <p class="brand-text">Aquaculture Freshness Monitoring System</p>
+    </div>
+    <nav class="menu">
+        <ul>
+            <li data-role="superadmin admin manager"><a href="Dashboard.html"><i class="fa-solid fa-gauge"></i><span class="label">Dashboard</span></a></li>
+            <li data-role="inspector"><a href="InspectorDashboard.html"><i class="fa-solid fa-clipboard-check"></i><span class="label">Inspector Dashboard</span></a></li>
+            <li data-role="delivery"><a href="DeliveryDashboard.html" class="active"><i class="fa-solid fa-truck"></i><span class="label">Delivery Dashboard</span></a></li>
+            <li data-role="superadmin admin manager inspector delivery"><a href="FreshnessEvaluation.html"><i class="fa-solid fa-water"></i><span class="label">Freshness Evaluation</span></a></li>
+            <li data-role="superadmin admin manager delivery"><a href="TransportDelivery.html"><i class="fa-solid fa-route"></i><span class="label">Transport & Delivery</span></a></li>
+            <li data-role="superadmin admin manager delivery"><a href="AnalyticsReporting.html"><i class="fa-solid fa-chart-line"></i><span class="label">Analytics & Reporting</span></a></li>
+            <li data-role="superadmin admin manager inspector"><a href="QualityControl.html"><i class="fa-solid fa-shield-halved"></i><span class="label">Quality Control</span></a></li>
+            <li data-role="superadmin admin manager"><a href="UserManagement.html"><i class="fa-solid fa-users"></i><span class="label">User Management</span></a></li>
+        </ul>
+    </nav>
+</aside>
+
+<!-- Dark overlay — tapping it closes the sidebar on mobile -->
+<div class="sidebar-overlay" onclick="document.getElementById('nav-toggle').checked = false;"></div>
+
+<header class="topbar">
+    <label for="nav-toggle" class="menu-btn">☰</label>
+
+    <div class="topbar-right">
+        <div class="notification-dropdown">
+            <input type="checkbox" id="notif-toggle">
+            <label for="notif-toggle" class="notif-trigger">
+                <i class="fa-solid fa-bell"></i>
+                <span class="badge" id="notif-count">0</span>
+            </label>
+            <div class="dropdown-menu notif-menu">
+                <div class="notif-header">New Assignments</div>
+                <div id="notif-list">
+                    <div class="notif-item">No new deliveries.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-dropdown">
+            <input type="checkbox" id="profile-toggle">
+            <label for="profile-toggle" class="profile-trigger">
+                <span id="userRoleLabel">Driver</span> <span class="caret">▾</span>
+            </label>
+            <div class="dropdown-menu">
+                <a href="Profile.html">Profile</a>
+                <a href="Login.html" class="logout">Logout</a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<main class="content">
+
+    <section class="page-header">
+        <h2>My Delivery Dashboard</h2>
+        <p class="subtitle">View your assigned deliveries and start your routes.</p>
+    </section>
+
+    <!-- MY ASSIGNMENTS -->
+    <section class="panel">
+        <div class="panel-header-flex">
+            <h3>My Assignments</h3>
+            <span class="summary-hint">Click a card to view your loads</span>
+        </div>
+        <div class="qc-status-cards">
+            <div class="qc-status-card yellow" id="btn-pending" role="button" tabindex="0">
+                <div class="card-icon"><i class="fa-solid fa-hourglass-half"></i></div>
+                <div class="card-info">
+                    <div class="card-title">Pending</div>
+                    <div class="card-count" id="pending-count">0</div>
+                    <div class="card-cta">View records →</div>
+                </div>
+                <i class="fa-solid fa-chevron-right card-arrow"></i>
+            </div>
+
+            <div class="qc-status-card blue" id="btn-enroute" role="button" tabindex="0">
+                <div class="card-icon"><i class="fa-solid fa-truck"></i></div>
+                <div class="card-info">
+                    <div class="card-title">En Route</div>
+                    <div class="card-count" id="enroute-count">0</div>
+                    <div class="card-cta">View records →</div>
+                </div>
+                <i class="fa-solid fa-chevron-right card-arrow"></i>
+            </div>
+
+            <div class="qc-status-card green" id="btn-delivered" role="button" tabindex="0">
+                <div class="card-icon"><i class="fa-solid fa-box-check"></i></div>
+                <div class="card-info">
+                    <div class="card-title">Delivered</div>
+                    <div class="card-count" id="delivered-count">0</div>
+                    <div class="card-cta">View records →</div>
+                </div>
+                <i class="fa-solid fa-chevron-right card-arrow"></i>
+            </div>
+
+            <div class="qc-status-card red" id="btn-delayed" role="button" tabindex="0">
+                <div class="card-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                <div class="card-info">
+                    <div class="card-title">Delayed</div>
+                    <div class="card-count" id="delayed-count">0</div>
+                    <div class="card-cta">View records →</div>
+                </div>
+                <i class="fa-solid fa-chevron-right card-arrow"></i>
+            </div>
+        </div>
+    </section>
+
+    <!-- THRESHOLD ALERT BANNER -->
+    <section
+        id="deliveryAlarmBanner"
+        class="delivery-alarm-banner"
+        role="alert"
+        aria-live="polite"
+        hidden
+        onclick="window.location.href='AnalyticsReporting.html'"
+        style="cursor:pointer;">
+        <div class="alarm-icon-wrap">
+            <i class="fa-solid fa-bell"></i>
+        </div>
+        <div class="alarm-body">
+            <p class="alarm-title">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                Threshold Alert
+            </p>
+            <ul class="alarm-list" id="deliveryAlarmMessages"></ul>
+            <p class="alarm-footer" id="deliveryAlarmTimestamp"></p>
+        </div>
+        <div class="alarm-cta">
+            <span>View Analytics</span>
+            <i class="fa-solid fa-chevron-right"></i>
+        </div>
+    </section>
+
+    <!-- ALL MY DELIVERIES -->
+    <section class="panel">
+        <div class="panel-header-flex">
+            <h3>All My Deliveries</h3>
+        </div>
+        <table class="qc-table">
+            <thead>
+                <tr>
+                    <th>Delivery ID</th>
+                    <th>Destination</th>
+                    <th>ETA</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="all-deliveries-body"></tbody>
+        </table>
+    </section>
+
+</main>
+
+<!-- MODALS -->
+
+<div class="qc-modal-overlay" id="modal-pending">
+    <div class="qc-modal wide">
+        <div class="qc-modal-header yellow">
+            <h3><i class="fa-solid fa-hourglass-half"></i> Pending Deliveries <span class="modal-count-badge" id="modal-pending-count">0</span></h3>
+            <button class="qc-modal-close" data-close="modal-pending"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="qc-modal-body">
+            <table class="qc-table">
+                <thead><tr><th>ID</th><th>Destination</th><th>ETA</th><th>Action</th></tr></thead>
+                <tbody id="pending-body"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="qc-modal-overlay" id="modal-enroute">
+    <div class="qc-modal wide">
+        <div class="qc-modal-header blue">
+            <h3><i class="fa-solid fa-truck"></i> En Route <span class="modal-count-badge" id="modal-enroute-count">0</span></h3>
+            <button class="qc-modal-close" data-close="modal-enroute"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="qc-modal-body">
+            <table class="qc-table">
+                <thead><tr><th>ID</th><th>Destination</th><th>ETA</th><th>Action</th></tr></thead>
+                <tbody id="enroute-body"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="qc-modal-overlay" id="modal-delivered">
+    <div class="qc-modal wide">
+        <div class="qc-modal-header green">
+            <h3><i class="fa-solid fa-box-check"></i> Delivered <span class="modal-count-badge" id="modal-delivered-count">0</span></h3>
+            <button class="qc-modal-close" data-close="modal-delivered"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="qc-modal-body">
+            <table class="qc-table">
+                <thead><tr><th>ID</th><th>Destination</th><th>Delivered At</th><th>Status</th></tr></thead>
+                <tbody id="delivered-body"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="qc-modal-overlay" id="modal-delayed">
+    <div class="qc-modal wide">
+        <div class="qc-modal-header red">
+            <h3><i class="fa-solid fa-triangle-exclamation"></i> Delayed <span class="modal-count-badge" id="modal-delayed-count">0</span></h3>
+            <button class="qc-modal-close" data-close="modal-delayed"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="qc-modal-body">
+            <table class="qc-table">
+                <thead><tr><th>ID</th><th>Destination</th><th>ETA</th><th>Action</th></tr></thead>
+                <tbody id="delayed-body"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script type="module" src="sidebar.js"></script>
+<script type="module" src="role-ui.js"></script>
+<script type="module" src="DeliveryDashboard.js"></script>
+
+<script>
+    (function () {
+        function openModal(id) {
+            const el = document.getElementById(id);
+            if (el) el.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeModal(id) {
+            const el = document.getElementById(id);
+            if (el) el.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        document.getElementById('btn-pending')?.addEventListener('click', () => openModal('modal-pending'));
+        document.getElementById('btn-enroute')?.addEventListener('click', () => openModal('modal-enroute'));
+        document.getElementById('btn-delivered')?.addEventListener('click', () => openModal('modal-delivered'));
+        document.getElementById('btn-delayed')?.addEventListener('click', () => openModal('modal-delayed'));
+
+        document.querySelectorAll('.qc-modal-close').forEach(btn => {
+            btn.addEventListener('click', () => closeModal(btn.dataset.close));
+        });
+        document.querySelectorAll('.qc-modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(overlay.id); });
+        });
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') document.querySelectorAll('.qc-modal-overlay.active').forEach(el => closeModal(el.id));
+        });
+    })();
+</script>
+
+</body>
+</html>
